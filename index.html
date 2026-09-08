@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#090e1a">
+  <title>Suite Integral: PERT • CPM • Probabilidad</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-wrapper">
+    
+    <!-- Encabezado Principal - Constructora Victoria -->
+    <header class="app-header">
+      <div class="header-main-row">
+        <div class="header-brand-box">
+          <div class="logo-transparent-wrapper" title="Constructora Victoria">
+            <img src="logo_constructora_victoria_transparent.png" alt="Constructora Victoria" class="company-logo">
+          </div>
+          <div class="header-titles">
+            <div class="header-company-badge">
+              <span class="brand-status-dot"></span> CONSTRUCTORA VICTORIA &bull; SISTEMA DE CONTROL DE OBRAS
+            </div>
+            <h1>Suite Integral <span>PERT &bull; CPM &bull; Probabilidad</span></h1>
+            <p>Planificación, ruta crítica y riesgo de proyectos en una sola vista.</p>
+          </div>
+        </div>
+        <div class="header-right-actions">
+          <button id="btn-master-excel" class="btn-master-export" title="Descargar libro de Microsoft Excel con 4 hojas completas">
+            <span>↓</span> Exportar informe
+          </button>
+        </div>
+      </div>
+
+      <!-- Capacidades principales -->
+      <div class="header-sub-banner">
+        <div class="sub-banner-item">
+          <span class="dot-orange"></span>
+          <span>Estimación PERT</span>
+        </div>
+        <div class="sub-banner-item">
+          <span class="dot-blue"></span>
+          <span>Ruta crítica CPM</span>
+        </div>
+        <div class="sub-banner-item">
+          <span class="dot-green"></span>
+          <span>Riesgo Normal Z</span>
+        </div>
+        <div class="sub-banner-item ml-auto">
+          <span class="badge badge-primary">EDICIÓN CORPORATIVA <span class="badge-divider">•</span> v2.0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Pestañas de Navegación -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-prob">
+        <span>📝</span> 1. Ejercicio Probabilidad (Paso a Paso)
+      </button>
+      <button class="nav-tab" data-tab="tab-pert">
+        <span>📋</span> 2. Tabla PERT (Multiactividad)
+      </button>
+      <button class="nav-tab" data-tab="tab-cpm">
+        <span>⏱️</span> 3. CPM & Diagrama de Red (AON)
+      </button>
+      <button class="nav-tab" data-tab="tab-proj-prob">
+        <span>🎯</span> 4. Probabilidad del Proyecto (Z)
+      </button>
+    </nav>
+
+    <!-- ====================================================================
+         PESTAÑA 1: EJERCICIO DE PROBABILIDAD (PASO A PASO IDÉNTICO A LA PIZARRA)
+         ==================================================================== -->
+    <section id="tab-prob" class="tab-panel active">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Ingreso de Datos del Problema</h2>
+            <span class="note">Ingresa los tiempos optimista, probable, pesimista y el plazo contractual estipulado.</span>
+          </div>
+          <div class="header-actions-btn" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button id="btn-sample-prob" class="btn btn-outline" title="Cargar los datos exactos del ejercicio de la pizarra">
+              🎯 Cargar Ejemplo de la Pizarra
+            </button>
+            <button id="btn-clear-prob" class="btn btn-outline" title="Limpiar todas las casillas">
+              🧹 Limpiar
+            </button>
+          </div>
+        </div>
+
+        <!-- Cuadrícula de Entradas Requeridas -->
+        <div class="prob-input-grid">
+          <div class="form-field">
+            <label for="prob-name">Actividad / Partida:</label>
+            <input type="text" id="prob-name" placeholder="Ej: Preparación de terreno" value="Preparación de terreno">
+          </div>
+          <div class="form-field">
+            <label for="prob-a">Tiempo Optimista (a):</label>
+            <div class="input-with-unit">
+              <input type="number" id="prob-a" step="0.5" placeholder="Ej: 4" value="4">
+              <span class="unit">días</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="prob-m">Tiempo Más Probable (m):</label>
+            <div class="input-with-unit">
+              <input type="number" id="prob-m" step="0.5" placeholder="Ej: 6" value="6">
+              <span class="unit">días</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="prob-b">Tiempo Pesimista (b):</label>
+            <div class="input-with-unit">
+              <input type="number" id="prob-b" step="0.5" placeholder="Ej: 10" value="10">
+              <span class="unit">días</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="prob-td">Plazo Estipulado (Td):</label>
+            <div class="input-with-unit">
+              <input type="number" id="prob-td" step="0.5" placeholder="Ej: 8" value="8">
+              <span class="unit">días</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prob-actions-bar">
+          <button id="btn-solve-prob" class="btn btn-action-main">
+            ⚡ Resolver Ejercicio Paso a Paso
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenedor Dinámico con la Resolución y Gráficos -->
+      <div id="prob-solution-container">
+        <!-- Generado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PESTAÑA 2: TABLA DE TIEMPOS PERT MULTIACTIVIDAD
+         ==================================================================== -->
+    <section id="tab-pert" class="tab-panel">
+      <!-- Fila de Métricas Ejecutivas PERT -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-data">
+            <span class="kpi-label">Total Actividades</span>
+            <span class="kpi-val" id="kpi-total-acts">15</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">⏱️</div>
+          <div class="kpi-data">
+            <span class="kpi-label">Suma de Te Esperados</span>
+            <span class="kpi-val" id="kpi-total-te">-- d</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-data">
+            <span class="kpi-label">Desviación Global (&sigma;)</span>
+            <span class="kpi-val" id="kpi-total-sd">-- d</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Tabla de Partidas, Duraciones y Tiempos PERT</h2>
+            <span class="note">Cálculo de Te, varianza y desviación de cada actividad • Totalmente editable</span>
+          </div>
+          <div class="card-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button id="btn-sync-cpm" class="btn btn-action-main" title="Enviar automáticamente los Te calculados a CPM para generar el diagrama de red">
+              🚀 Enviar a CPM y Generar Red
+            </button>
+            <button id="btn-export-excel" class="btn btn-success" title="Descargar esta tabla en Microsoft Excel (.xlsx)">
+              📊 Exportar a Excel (.xlsx)
+            </button>
+            <button id="btn-paste-excel" class="btn btn-outline" title="Pegar celdas copiadas desde Excel o Sheets">
+              📋 Pegar de Excel
+            </button>
+            <button id="btn-add-row" class="btn btn-outline" title="Agregar fila">
+              ➕ Agregar Fila
+            </button>
+            <button id="btn-clear-table" class="btn btn-outline" title="Ingresar a mano">
+              ✍️ Ingresar a Mano
+            </button>
+            <button id="btn-reset" class="btn btn-outline" title="Restaurar datos estándar">
+              ↺ Restaurar
+            </button>
+            <button id="btn-export-csv" class="btn btn-outline" title="Exportar CSV">
+              ⬇ CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Opciones de Visualización -->
+        <div class="view-toggles">
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-stats" checked>
+            <span>Mostrar Varianza (&sigma;&sup2;) y Desviación (&sigma;)</span>
+          </label>
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-fractions">
+            <span>Mostrar fracciones en Te</span>
+          </label>
+          <div style="display: flex; align-items: center; gap: 0.4rem; margin-left: auto;">
+            <span>Decimales:</span>
+            <select id="decimal-places" style="padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
+              <option value="2" selected>2 decimales</option>
+              <option value="3">3 decimales</option>
+              <option value="4">4 decimales</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tabla PERT -->
+        <div class="table-wrapper">
+          <table class="pert-table" id="pert-table">
+            <thead>
+              <tr>
+                <th style="width: 10%;">PARTIDAS</th>
+                <th style="width: 16%;">PREDECESORA</th>
+                <th style="width: 11%; text-align: right;">DURACIÓN (m)</th>
+                <th style="width: 10%; text-align: right;">a (optimista)</th>
+                <th style="width: 10%; text-align: right;">m (probable)</th>
+                <th style="width: 10%; text-align: right;">b (pesimista)</th>
+                <th style="width: 13%; text-align: right; background: #e0e7ff; color: #1e3a8a;">Te (Esperado)</th>
+                <th class="extra-col" style="width: 10%; text-align: right;">Varianza (&sigma;&sup2;)</th>
+                <th class="extra-col" style="width: 10%; text-align: right;">Desv. (&sigma;)</th>
+                <th style="width: 5%; text-align: center;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Generado dinámicamente -->
+            </tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <td colspan="2"><strong>TOTALES DEL PROYECTO</strong></td>
+                <td id="total-duracion" class="num-cell">0.0</td>
+                <td id="total-a" class="num-cell">0.0</td>
+                <td id="total-m" class="num-cell">0.0</td>
+                <td id="total-b" class="num-cell">0.0</td>
+                <td id="total-te" class="num-cell highlight-te">0.00</td>
+                <td id="total-var" class="num-cell extra-col">0.00</td>
+                <td id="total-sd" class="num-cell extra-col">0.00</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.85rem;">
+          💡 <strong>Tip Interactivo:</strong> Haz clic sobre cualquier valor de <strong>Te, Varianza o Desviación</strong> para abrir el desglose matemático paso a paso con fórmulas y reemplazos.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PESTAÑA 3: CPM & DIAGRAMA DE RED DE ACTIVIDADES (AON) & GANTT
+         ==================================================================== -->
+    <section id="tab-cpm" class="tab-panel">
+      <div class="cpm-layout">
+        
+        <!-- Panel Izquierdo: Lista de Actividades y Tiempos CPM -->
+        <div class="card" style="margin-bottom: 0;">
+          <div class="card-header">
+            <div>
+              <h3>Actividades en CPM</h3>
+              <span class="note">Tiempos sincronizados desde Te</span>
+            </div>
+            <button id="btn-cpm-calculate" class="btn btn-primary btn-sm">⚡ Recalcular</button>
+          </div>
+
+          <div id="cpm-error-alert" class="badge-danger" style="display: none; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.75rem; font-size: 0.8rem;"></div>
+
+          <div class="table-wrapper" style="max-height: 480px; overflow-y: auto;">
+            <table class="pert-table" style="font-size: 0.82rem;">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Partida</th>
+                  <th style="width: 45%;">Predecesora</th>
+                  <th style="width: 20%; text-align: right;">Duración</th>
+                  <th style="width: 10%;"></th>
+                </tr>
+              </thead>
+              <tbody id="cpm-input-tbody">
+                <!-- Generado dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+            <button id="btn-cpm-excel" class="btn btn-success btn-sm" title="Descargar resultados CPM en Excel">
+              📊 Exportar CPM a Excel (.xlsx)
+            </button>
+            <button id="btn-cpm-to-prob" class="btn btn-outline btn-sm" title="Analizar el riesgo Z de la ruta crítica hallada">
+              🎯 Analizar Probabilidad Z de esta Ruta Crítica
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel Derecho: Lámina Visual del Diagrama de Red (AON) -->
+        <div class="cpm-sheet-card">
+          <div class="sheet-header">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 900;">Diagrama de Actividades (AON)</h3>
+              <p style="font-size: 0.78rem; color: var(--text-muted);">Nodos circulares • Arriba: IT | FT • Abajo: ITa | FTa</p>
+            </div>
+            <div class="sheet-legend">
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <span class="legend-dot-red"></span>
+                <span><strong>Ruta crítica</strong></span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <span class="legend-dot-blue"></span>
+                <span>Demás relaciones</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+              <button id="btn-zoom-in" class="btn btn-outline btn-sm" title="Acercar">🔍 +</button>
+              <button id="btn-zoom-out" class="btn btn-outline btn-sm" title="Alejar">🔍 -</button>
+              <button id="btn-reset-view" class="btn btn-outline btn-sm" title="Centrar">🎯 Centrar</button>
+              <button id="btn-export-png" class="btn btn-secondary btn-sm" title="Descargar como imagen PNG de alta definición">📷 PNG</button>
+              <button id="btn-export-svg" class="btn btn-secondary btn-sm" title="Descargar como vector SVG">📐 SVG</button>
+            </div>
+          </div>
+
+          <!-- Lienzo SVG del Diagrama -->
+          <div class="diagram-viewport" id="diagram-container">
+            <svg id="cpm-svg"></svg>
+          </div>
+
+          <!-- Banner Resumen de Ruta Crítica -->
+          <div class="sheet-summary-banner">
+            <div class="summary-box-total">
+              <div class="label">Tiempo Total del Proyecto</div>
+              <div class="value" id="val-total-time">-- días</div>
+            </div>
+            <div class="summary-box-critical">
+              <div class="label">Ruta Crítica Identificada:</div>
+              <div class="chain" id="val-critical-chain">--</div>
+              <div class="formula" id="val-critical-formula">--</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Cronograma de Barras Gantt Temprano vs Tardío -->
+      <div class="card" style="margin-top: 1.25rem;">
+        <div class="card-header">
+          <div>
+            <h3>Cronograma de Barras (Cronograma Temprano & Holguras)</h3>
+            <span class="note">Visualización secuencial en el tiempo: Azul = Actividad normal | Rojo = Actividad crítica | Punteado = Holgura</span>
+          </div>
+        </div>
+        <div class="chart-container-fluid" id="cpm-gantt-container">
+          <!-- Generado dinámicamente por ChartsEngine -->
+        </div>
+      </div>
+
+      <!-- Tabla Completa de Holguras y Tiempos CPM -->
+      <div class="card" style="margin-top: 1.25rem;">
+        <div class="card-header">
+          <div>
+            <h3>Tabla Detallada de Tiempos y Holguras (ES, EF, LS, LF, HT, HL)</h3>
+            <span class="note">HT = Holgura Total (ITa - IT) • HL = Holgura Libre (min IT sucesoras - FT)</span>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button onclick="ExcelExporter.exportCpmResults(lastCpmResult)" class="btn btn-success btn-sm">📊 Exportar a Excel (.xlsx)</button>
+            <button id="btn-cpm-csv" class="btn btn-outline btn-sm">CSV</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="pert-table">
+            <thead>
+              <tr>
+                <th>Partida</th>
+                <th>Predecesoras</th>
+                <th style="text-align: right;">Duración (d)</th>
+                <th style="text-align: right;">IT (ES)</th>
+                <th style="text-align: right;">FT (EF)</th>
+                <th style="text-align: right;">ITa (LS)</th>
+                <th style="text-align: right;">FTa (LF)</th>
+                <th style="text-align: right;">Holgura Total (HT)</th>
+                <th style="text-align: right;">Holgura Libre (HL)</th>
+                <th style="text-align: center;">¿Es Crítica?</th>
+              </tr>
+            </thead>
+            <tbody id="cpm-results-tbody">
+              <!-- Filas de resultados CPM -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PESTAÑA 4: PROBABILIDAD DEL PROYECTO COMPLETO (Z)
+         ==================================================================== -->
+    <section id="tab-proj-prob" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Evaluación de Probabilidad Z y Riesgo Global del Proyecto</h2>
+            <span class="note">Certidumbre estadística de culminar el proyecto completo en una fecha contractual límite.</span>
+          </div>
+          <button id="btn-export-proj-prob" class="btn btn-success btn-sm" title="Descargar este análisis en Excel">
+            📊 Exportar Análisis a Excel (.xlsx)
+          </button>
+        </div>
+
+        <div class="proj-prob-grid">
+          
+          <!-- Controles de Configuración -->
+          <div style="background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <div class="form-field" style="margin-bottom: 1rem;">
+              <label for="proj-target-mode">Base para el Análisis Probabilístico:</label>
+              <select id="proj-target-mode">
+                <option value="critical_path" selected>Ruta Crítica del Proyecto (Teoría PERT Oficial)</option>
+                <option value="all_sum">Suma de Todas las Actividades (&Sigma; Te)</option>
+                <option value="single_activity">Actividad Específica del Proyecto</option>
+              </select>
+            </div>
+
+            <div class="form-field" id="proj-group-select-act" style="display: none; margin-bottom: 1rem;">
+              <label for="proj-activity-select">Seleccionar Actividad:</label>
+              <select id="proj-activity-select"></select>
+            </div>
+
+            <div class="stat-summary-duo">
+              <div class="stat-metric-card">
+                <div class="title">Te Referencia</div>
+                <div class="value" id="proj-display-te">0.00 d</div>
+              </div>
+              <div class="stat-metric-card">
+                <div class="title">&sigma; Referencia</div>
+                <div class="value" id="proj-display-sd">0.00 d</div>
+              </div>
+            </div>
+
+            <div class="form-field" style="margin-top: 1.25rem;">
+              <label for="proj-input-td">Plazo Contractual Meta (Td):</label>
+              <div class="input-with-unit">
+                <input type="number" id="proj-input-td" step="0.5" placeholder="Ej: 55">
+                <span class="unit">días</span>
+              </div>
+            </div>
+
+            <!-- Tacómetro de Riesgo del Proyecto -->
+            <div style="margin-top: 1.5rem; background: #ffffff; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); text-align: center;">
+              <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">
+                Tacómetro de Probabilidad del Proyecto
+              </div>
+              <div id="proj-gauge-container"></div>
+            </div>
+          </div>
+
+          <!-- Gráficos y Métricas del Proyecto -->
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            
+            <div style="background: #ffffff; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+              <h4 id="proj-target-title" style="font-size: 1.25rem; font-weight: 900; margin-bottom: 0.85rem; color: #0f172a;">Ruta Crítica</h4>
+              
+              <div class="results-duo-grid">
+                <div class="result-duo-box success-box">
+                  <div class="duo-icon">🎯</div>
+                  <div class="duo-info">
+                    <span class="duo-label">Probabilidad de Culminar a Tiempo</span>
+                    <div class="duo-percentage success-text" id="proj-prob-result">--%</div>
+                    <p class="duo-desc">Valor Z normalizado: <strong id="proj-val-z">--</strong></p>
+                  </div>
+                </div>
+
+                <div class="result-duo-box risk-box">
+                  <div class="duo-icon">⚠️</div>
+                  <div class="duo-info">
+                    <span class="duo-label">Riesgo de Exceder el Plazo</span>
+                    <div class="duo-percentage risk-text" id="proj-risk-result">--%</div>
+                    <p class="duo-desc">Probabilidad de superar la fecha contractual comprometida.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Campana de Gauss del Proyecto -->
+              <div style="margin-top: 1.25rem;">
+                <h5 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 0.4rem; color: #334155;">Campana de Gauss del Proyecto Global</h5>
+                <div id="proj-gaussian-container" class="chart-container-fluid"></div>
+              </div>
+            </div>
+
+            <!-- Curva S de Probabilidad Acumulada -->
+            <div style="background: #ffffff; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                <h5 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">Curva S de Probabilidad Acumulada (Sigmoide PERT)</h5>
+                <span class="note">Estándar PMI para control de contingencia contractual</span>
+              </div>
+              <div id="proj-scurve-container" class="chart-container-fluid"></div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal para Desglose Paso a Paso al hacer clic en celdas -->
+    <div id="detail-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">Desglose Paso a Paso</h3>
+          <button class="btn-close" id="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Modal para Pegar desde Excel -->
+    <div id="paste-modal" class="modal">
+      <div class="modal-content modal-lg">
+        <div class="modal-header">
+          <h3>📋 Cargar Datos Copiados desde Excel o Google Sheets</h3>
+          <button class="btn-close" id="paste-modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Copia el rango de celdas en tu hoja de cálculo y pégalo aquí con <strong>Ctrl + V</strong>:
+          </p>
+          <textarea id="paste-textarea" class="excel-textarea" placeholder="Pega aquí las filas copiadas de Excel...&#10;&#10;Ejemplo:&#10;A	—	5	4	5	6&#10;B	A	3	2	3	4&#10;C	A	6	4	6	8"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-paste" class="btn btn-outline">Cancelar</button>
+          <button id="btn-apply-paste" class="btn btn-primary">Cargar en la Tabla</button>
+        </div>
+      </div>
+    <!-- Modal para Usar en Celular -->
+    <div id="mobile-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>📱 Abrir en tu Celular o Tablet</h3>
+          <button class="btn-close" id="mobile-modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="background: #eff6ff; padding: 1.25rem; border-radius: var(--radius-md); border: 1.5px solid #93c5fd; margin-bottom: 1.25rem; text-align: center;">
+            <p style="font-size: 0.8rem; color: #1e40af; font-weight: 800; text-transform: uppercase; margin-bottom: 0.35rem;">DIRECCIÓN DE ACCESO WI-FI:</p>
+            <div style="font-size: 1.45rem; font-weight: 900; font-family: var(--font-mono); color: #1d4ed8; word-break: break-all;">
+              http://192.168.18.78:8080
+            </div>
+            <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem;">(Escribe esta dirección exacta en el navegador de tu celular)</p>
+          </div>
+          <ol style="font-size: 0.88rem; color: #334155; line-height: 1.6; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li>Conecta tu celular a la <strong>misma red Wi-Fi</strong> de tu computador.</li>
+            <li>En tu computador, abre el archivo <code>compartir_a_celular.bat</code> (dentro de la carpeta de la app) para habilitar el servidor local.</li>
+            <li>Abre Chrome, Safari o tu navegador preferido en el celular y entra a la dirección de arriba.</li>
+            <li>¡Listo! Podrás manipular la tabla, ver la lámina CPM táctil y calcular probabilidades desde la palma de tu mano.</li>
+          </ol>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-close-mobile-info" class="btn btn-primary">Entendido</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts en orden de dependencia -->
+  <script src="xlsx.full.min.js"></script>
+  <script src="excel_export.js"></script>
+  <script src="charts_module.js"></script>
+  <script src="cpm_engine.js"></script>
+  <script src="diagram_renderer.js"></script>
+  <script src="probability_module.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
