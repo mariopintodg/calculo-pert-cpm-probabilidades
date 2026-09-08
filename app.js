@@ -419,7 +419,8 @@ function parseCpmPasteRows(rawText) {
     cols = cols.map(col => col.trim());
 
     const firstCell = (cols[0] || '').toLowerCase();
-    if (/partida|actividad|predecesora|duraci[oó]n/.test(firstCell)) {
+    const rowText = cols.join(' ').toLowerCase();
+    if (/^(partida|actividades?|id|c[oó]digo)$/.test(firstCell) || (/predecesora/.test(rowText) && /duraci[oó]n/.test(rowText))) {
       ignoredRows++;
       return;
     }
