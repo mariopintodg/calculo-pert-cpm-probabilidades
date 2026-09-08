@@ -1178,6 +1178,57 @@ body {
   gap: 1rem;
 }
 
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.paste-help-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.paste-format-example {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.85rem;
+  padding: 0.7rem 0.85rem;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.paste-format-title {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.paste-format-example code {
+  color: var(--brand-blue-dark);
+  line-height: 1.5;
+}
+
+.cpm-paste-textarea {
+  height: 220px;
+}
+
+.paste-note {
+  margin-top: 0.65rem;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
 .summary-box-total .label, .summary-box-critical .label {
   font-size: 0.74rem;
   font-weight: 800;

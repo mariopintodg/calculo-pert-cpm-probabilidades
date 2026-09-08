@@ -275,7 +275,12 @@
               <h3>Actividades en CPM</h3>
               <span class="note">Tiempos sincronizados desde Te</span>
             </div>
-            <button id="btn-cpm-calculate" class="btn btn-primary btn-sm">⚡ Recalcular</button>
+            <div class="card-header-actions">
+              <button id="btn-cpm-paste" class="btn btn-outline btn-sm" title="Pegar actividades copiadas desde Excel o Google Sheets">
+                📋 Pegar desde Excel
+              </button>
+              <button id="btn-cpm-calculate" class="btn btn-primary btn-sm">⚡ Recalcular</button>
+            </div>
           </div>
 
           <div id="cpm-error-alert" class="badge-danger" style="display: none; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.75rem; font-size: 0.8rem;"></div>
@@ -541,6 +546,34 @@
           <button id="btn-apply-paste" class="btn btn-primary">Cargar en la Tabla</button>
         </div>
       </div>
+    </div>
+
+    <!-- Modal para Pegar actividades CPM desde Excel -->
+    <div id="cpm-paste-modal" class="modal">
+      <div class="modal-content modal-lg">
+        <div class="modal-header">
+          <h3>📋 Cargar actividades CPM desde Excel</h3>
+          <button class="btn-close" id="cpm-paste-modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="paste-help-text">
+            Copia desde Excel o Google Sheets y pega aquí con <strong>Ctrl + V</strong>. Usa tres columnas:
+            <strong>Partida</strong>, <strong>Predecesora(s)</strong> y <strong>Duración</strong>.
+          </p>
+          <div class="paste-format-example">
+            <div class="paste-format-title">Ejemplo para copiar</div>
+            <code>A&nbsp;&nbsp;&nbsp;—&nbsp;&nbsp;&nbsp;5<br>B&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;3<br>C&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;6</code>
+          </div>
+          <textarea id="cpm-paste-textarea" class="excel-textarea cpm-paste-textarea" placeholder="Pega aquí tus filas...&#10;&#10;A&#9;—&#9;5&#10;B&#9;A&#9;3&#10;C&#9;A&#9;6"></textarea>
+          <p class="paste-note">La carga reemplazará las actividades actuales de CPM y calculará automáticamente la ruta crítica.</p>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-cpm-paste" class="btn btn-outline">Cancelar</button>
+          <button id="btn-apply-cpm-paste" class="btn btn-primary">Cargar en CPM</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal para Usar en Celular -->
     <div id="mobile-modal" class="modal">
       <div class="modal-content">

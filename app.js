@@ -341,6 +341,7 @@ function initCPMModule() {
   const btnResetView = document.getElementById('btn-reset-view');
   const btnExportPng = document.getElementById('btn-export-png');
   const btnExportSvg = document.getElementById('btn-export-svg');
+  const btnCpmPaste = document.getElementById('btn-cpm-paste');
   const btnCpmExcel = document.getElementById('btn-cpm-excel');
   const btnCpmCsv = document.getElementById('btn-cpm-csv');
   const btnGoProb = document.getElementById('btn-cpm-to-prob');
@@ -351,6 +352,7 @@ function initCPMModule() {
   if (btnResetView) btnResetView.addEventListener('click', () => diagramRendererInstance.resetView());
   if (btnExportPng) btnExportPng.addEventListener('click', exportDiagramPng);
   if (btnExportSvg) btnExportSvg.addEventListener('click', exportDiagramSvg);
+  if (btnCpmPaste) btnCpmPaste.addEventListener('click', openCpmPasteModal);
   if (btnCpmExcel) btnCpmExcel.addEventListener('click', () => ExcelExporter.exportCpmResults(lastCpmResult));
   if (btnCpmCsv) btnCpmCsv.addEventListener('click', exportCpmToCsv);
   if (btnGoProb) btnGoProb.addEventListener('click', sendCriticalPathToProb);
@@ -375,6 +377,82 @@ function loadActivitiesIntoCPM(activities) {
   });
 
   runCpmCalculation();
+}
+
+function openCpmPasteModal() {
+  const modal = document.getElementById('cpm-paste-modal');
+  const txt = document.getElementById('cpm-paste-textarea');
+  if (txt) txt.value = '';
+  if (modal) modal.classList.add('active');
+  if (txt) txt.focus();
+}
+
+function closeCpmPasteModal() {
+  const modal = document.getElementById('cpm-paste-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function parseCpmPasteNumber(value) {
+  const normalized = String(value || '').trim().replace(',', '.');
+  if (!normalized) return NaN;
+  return Number(normalized);
+}
+
+function parseCpmPasteRows(rawText) {
+  const lines = String(rawText || '')
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+  const activities = [];
+  const seenIds = new Set();
+  let ignoredRows = 0;
+
+  lines.forEach(line => {
+    let cols;
+    if (line.includes('\t')) {
+      cols = line.split('\t');
+    } else if (line.includes(';')) {
+      cols = line.split(';');
+    } else {
+      cols = line.split(/\s{2,}/);
+    }
+    cols = cols.map(col => col.trim());
+
+    const firstCell = (cols[0] || '').toLowerCase();
+    if (/partida|actividad|predecesora|duraci[oó]n/.test(firstCell)) {
+      ignoredRows++;
+      return;
+    }
+
+    const id = (cols[0] || '').trim().toUpperCase();
+    const predecessors = (cols[1] || '—').trim() || '—';
+    const duration = parseCpmPasteNumber(cols[2]);
+
+    if (!id || !Number.isFinite(duration) || duration < 0 || seenIds.has(id)) {
+      ignoredRows++;
+      return;
+    }
+
+    seenIds.add(id);
+    activities.push({ id, name: id, predecessors, duration });
+  });
+
+  return { activities, ignoredRows };
+}
+
+function applyCpmPasteData() {
+  const txt = document.getElementById('cpm-paste-textarea');
+  const { activities, ignoredRows } = parseCpmPasteRows(txt ? txt.value : '');
+
+  if (activities.length === 0) {
+    alert('No se detectaron actividades válidas. Usa las columnas: Partida, Predecesora(s) y Duración.');
+    return;
+  }
+
+  loadActivitiesIntoCPM(activities);
+  closeCpmPasteModal();
+  const skippedMessage = ignoredRows > 0 ? ` Se omitieron ${ignoredRows} fila(s) sin formato válido.` : '';
+  alert(`✅ Se cargaron ${activities.length} actividades en CPM.${skippedMessage}`);
 }
 
 function getCpmInputData() {
@@ -695,7 +773,21 @@ function initModals() {
   if (pasteClose && pasteModal) {
     pasteClose.addEventListener('click', () => pasteModal.classList.remove('active'));
     if (btnCancel) btnCancel.addEventListener('click', () => pasteModal.classList.remove('active'));
-    if (btnApply) btnApply.addEventListener('click', applyPasteData);
+  if (btnApply) btnApply.addEventListener('click', applyPasteData);
+
+  const cpmPasteModal = document.getElementById('cpm-paste-modal');
+  const cpmPasteClose = document.getElementById('cpm-paste-modal-close');
+  const btnCancelCpmPaste = document.getElementById('btn-cancel-cpm-paste');
+  const btnApplyCpmPaste = document.getElementById('btn-apply-cpm-paste');
+
+  if (cpmPasteClose) cpmPasteClose.addEventListener('click', closeCpmPasteModal);
+  if (btnCancelCpmPaste) btnCancelCpmPaste.addEventListener('click', closeCpmPasteModal);
+  if (btnApplyCpmPaste) btnApplyCpmPaste.addEventListener('click', applyCpmPasteData);
+  if (cpmPasteModal) {
+    window.addEventListener('click', (e) => {
+      if (e.target === cpmPasteModal) closeCpmPasteModal();
+    });
+  }
   }
 
   // Modal de Celular
