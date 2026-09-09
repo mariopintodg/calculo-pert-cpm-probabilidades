@@ -3,9 +3,11 @@
  * con estética idéntica al diagrama del usuario (Imagen 1)
  */
 class DiagramRenderer {
-  constructor(svgElementId, containerId) {
+  constructor(svgElementId, containerId, fileBaseName = 'diagrama_cpm_aon') {
     this.svg = document.getElementById(svgElementId);
     this.container = document.getElementById(containerId);
+    this.instanceKey = String(svgElementId).replace(/[^a-z0-9_-]/gi, '-');
+    this.fileBaseName = fileBaseName;
     this.data = null;
     this.nodePositions = {};
     this.nodeRadius = 26;
@@ -15,6 +17,7 @@ class DiagramRenderer {
     this.isDragging = false;
     this.startX = 0;
     this.startY = 0;
+    this.mainGroup = null;
 
     this._setupInteractions();
   }
@@ -82,15 +85,15 @@ class DiagramRenderer {
     // Marcadores de flechas y patrón de cuadrícula
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
     defs.innerHTML = `
-      <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5"
+      <marker id="arrow-blue-${this.instanceKey}" viewBox="0 0 10 10" refX="7" refY="5"
         markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#2563eb" />
       </marker>
-      <marker id="arrow-red" viewBox="0 0 10 10" refX="7" refY="5"
+      <marker id="arrow-red-${this.instanceKey}" viewBox="0 0 10 10" refX="7" refY="5"
         markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#dc2626" />
       </marker>
-      <pattern id="grid-paper" width="22" height="22" patternUnits="userSpaceOnUse">
+      <pattern id="grid-paper-${this.instanceKey}" width="22" height="22" patternUnits="userSpaceOnUse">
         <rect width="22" height="22" fill="#fafbfe" />
         <path d="M 22 0 L 0 0 0 22" fill="none" stroke="#e0e7ff" stroke-width="0.75" />
       </pattern>
@@ -101,12 +104,13 @@ class DiagramRenderer {
     const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     bgRect.setAttribute("width", "100%");
     bgRect.setAttribute("height", "100%");
-    bgRect.setAttribute("fill", "url(#grid-paper)");
+    bgRect.setAttribute("fill", `url(#grid-paper-${this.instanceKey})`);
     this.svg.appendChild(bgRect);
 
     // Grupo de transformación principal (Zoom y Paneo)
     const mainGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    mainGroup.setAttribute("id", "main-graph-group");
+    mainGroup.setAttribute("id", `${this.instanceKey}-main-graph-group`);
+    this.mainGroup = mainGroup;
     mainGroup.setAttribute("transform", `translate(${this.panX}, ${this.panY}) scale(${this.zoom})`);
     this.svg.appendChild(mainGroup);
 
@@ -170,12 +174,12 @@ class DiagramRenderer {
     if (isCritical) {
       path.setAttribute("stroke", "#dc2626");
       path.setAttribute("stroke-width", "2.8");
-      path.setAttribute("marker-end", "url(#arrow-red)");
+      path.setAttribute("marker-end", `url(#arrow-red-${this.instanceKey})`);
       path.setAttribute("class", "critical-edge");
     } else {
       path.setAttribute("stroke", "#2563eb");
       path.setAttribute("stroke-width", "1.6");
-      path.setAttribute("marker-end", "url(#arrow-blue)");
+      path.setAttribute("marker-end", `url(#arrow-blue-${this.instanceKey})`);
       path.setAttribute("class", "normal-edge");
     }
 
@@ -227,7 +231,10 @@ class DiagramRenderer {
     textDur.setAttribute("font-size", "10");
     textDur.setAttribute("font-weight", "600");
     textDur.setAttribute("fill", textColor);
-    textDur.textContent = `d=${Math.round(act.duration)}`;
+    const isPertDiagram = this.data && this.data.diagramType === 'pert';
+    const formatPertTime = value => Number(value).toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const durationText = isPertDiagram ? formatPertTime(act.duration) : Math.round(act.duration);
+    textDur.textContent = `${isPertDiagram ? 'Te=' : 'd='}${durationText}`;
     g.appendChild(textDur);
 
     // Texto ARRIBA: IT | FT
@@ -239,7 +246,7 @@ class DiagramRenderer {
     textTop.setAttribute("font-size", "11.5");
     textTop.setAttribute("font-weight", "bold");
     textTop.setAttribute("fill", subtextColor);
-    textTop.textContent = `${Math.round(act.ES)} | ${Math.round(act.EF)}`;
+    textTop.textContent = isPertDiagram ? `${formatPertTime(act.ES)} | ${formatPertTime(act.EF)}` : `${Math.round(act.ES)} | ${Math.round(act.EF)}`;
     g.appendChild(textTop);
 
     // Texto ABAJO: ITa | FTa
@@ -251,7 +258,7 @@ class DiagramRenderer {
     textBottom.setAttribute("font-size", "11.5");
     textBottom.setAttribute("font-weight", "bold");
     textBottom.setAttribute("fill", subtextColor);
-    textBottom.textContent = `${Math.round(act.LS)} | ${Math.round(act.LF)}`;
+    textBottom.textContent = isPertDiagram ? `${formatPertTime(act.LS)} | ${formatPertTime(act.LF)}` : `${Math.round(act.LS)} | ${Math.round(act.LF)}`;
     g.appendChild(textBottom);
 
     return g;
@@ -294,7 +301,7 @@ class DiagramRenderer {
       if (this.isDragging) {
         this.panX = e.clientX - this.startX;
         this.panY = e.clientY - this.startY;
-        const group = document.getElementById("main-graph-group");
+        const group = this.mainGroup;
         if (group) {
           group.setAttribute("transform", `translate(${this.panX}, ${this.panY}) scale(${this.zoom})`);
         }
@@ -333,7 +340,7 @@ class DiagramRenderer {
       if (e.touches.length === 1 && this.isDragging) {
         this.panX = e.touches[0].clientX - touchStartX;
         this.panY = e.touches[0].clientY - touchStartY;
-        const group = document.getElementById("main-graph-group");
+        const group = this.mainGroup;
         if (group) {
           group.setAttribute("transform", `translate(${this.panX}, ${this.panY}) scale(${this.zoom})`);
         }
@@ -344,7 +351,7 @@ class DiagramRenderer {
         );
         const factor = currentDist / initialPinchDist;
         this.zoom = Math.min(Math.max(0.3, this.zoom * (factor > 1 ? 1.02 : 0.98)), 3);
-        const group = document.getElementById("main-graph-group");
+        const group = this.mainGroup;
         if (group) {
           group.setAttribute("transform", `translate(${this.panX}, ${this.panY}) scale(${this.zoom})`);
         }
@@ -359,14 +366,21 @@ class DiagramRenderer {
 
   zoomIn() {
     this.zoom = Math.min(this.zoom * 1.2, 3);
-    const group = document.getElementById("main-graph-group");
+    const group = this.mainGroup;
     if (group) group.setAttribute("transform", `translate(${this.panX}, ${this.panY}) scale(${this.zoom})`);
   }
 
   zoomOut() {
     this.zoom = Math.max(this.zoom / 1.2, 0.3);
-    const group = document.getElementById("main-graph-group");
+    const group = this.mainGroup;
     if (group) group.setAttribute("transform", `translate(${this.panX}, ${this.panY}) scale(${this.zoom})`);
+  }
+
+  zoomBy(factor) {
+    const safeFactor = Number(factor);
+    if (!Number.isFinite(safeFactor) || safeFactor <= 0) return;
+    this.zoom = Math.min(Math.max(this.zoom * safeFactor, 0.3), 3);
+    if (this.mainGroup) this.mainGroup.setAttribute("transform", `translate(${this.panX}, ${this.panY}) scale(${this.zoom})`);
   }
 
   resetView() {
@@ -388,7 +402,7 @@ class DiagramRenderer {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "diagrama_cpm_otra_hoja.svg";
+    a.download = `${this.fileBaseName}.svg`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -415,7 +429,7 @@ class DiagramRenderer {
       const pngUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = pngUrl;
-      a.download = "diagrama_cpm_otra_hoja.png";
+      a.download = `${this.fileBaseName}.png`;
       a.click();
     };
     image.src = blobURL;

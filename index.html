@@ -138,6 +138,7 @@
       <div id="prob-solution-container">
         <!-- Generado dinámicamente -->
       </div>
+
     </section>
 
     <!-- ====================================================================
@@ -259,6 +260,50 @@
         <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.85rem;">
           💡 <strong>Tip Interactivo:</strong> Haz clic sobre cualquier valor de <strong>Te, Varianza o Desviación</strong> para abrir el desglose matemático paso a paso con fórmulas y reemplazos.
         </p>
+      </div>
+
+      <!-- Diagrama de red PERT con tiempos esperados (Te) -->
+      <div class="cpm-sheet-card pert-network-card">
+        <div class="sheet-header">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 900;">Diagrama de Red PERT (AON)</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Cada nodo usa el tiempo esperado Te • Flechas: predecesora → sucesora • Arriba: IT | FT • Abajo: ITa | FTa</p>
+          </div>
+          <div class="sheet-legend">
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <span class="legend-dot-red"></span>
+              <span><strong>Ruta crítica PERT</strong></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <span class="legend-dot-blue"></span>
+              <span>Demás relaciones</span>
+            </div>
+          </div>
+          <div class="network-toolbar">
+            <button id="btn-pert-zoom-in" class="btn btn-outline btn-sm" title="Acercar diagrama PERT">🔍 +</button>
+            <button id="btn-pert-zoom-out" class="btn btn-outline btn-sm" title="Alejar diagrama PERT">🔍 -</button>
+            <button id="btn-pert-reset-view" class="btn btn-outline btn-sm" title="Centrar diagrama PERT">🎯 Centrar</button>
+            <button id="btn-pert-export-png" class="btn btn-secondary btn-sm" title="Descargar diagrama PERT como PNG">📷 PNG</button>
+            <button id="btn-pert-export-svg" class="btn btn-secondary btn-sm" title="Descargar diagrama PERT como SVG">📐 SVG</button>
+          </div>
+        </div>
+
+        <div id="pert-network-error" class="badge-danger" style="display: none; margin: 0.85rem 1.5rem 0; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;"></div>
+        <div class="diagram-viewport" id="pert-diagram-container">
+          <svg id="pert-svg"></svg>
+        </div>
+
+        <div class="sheet-summary-banner">
+          <div class="summary-box-total">
+            <div class="label">Tiempo total esperado del proyecto</div>
+            <div class="value" id="val-pert-total-time">-- días</div>
+          </div>
+          <div class="summary-box-critical">
+            <div class="label">Ruta crítica PERT identificada:</div>
+            <div class="chain" id="val-pert-critical-chain">--</div>
+            <div class="formula" id="val-pert-critical-formula">--</div>
+          </div>
+        </div>
       </div>
     </section>
 

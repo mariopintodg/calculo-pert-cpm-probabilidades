@@ -26,6 +26,8 @@ const DEFAULT_PERT_DATA = [
 let pertActivities = JSON.parse(JSON.stringify(DEFAULT_PERT_DATA));
 let lastCpmResult = null;
 let diagramRendererInstance = null;
+let pertDiagramRendererInstance = null;
+let lastPertDiagramResult = null;
 let currentProjectProbData = null;
 
 // Inicialización
@@ -34,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProbabilityModule();
   initPertTable();
   initCPMModule();
+  initPertNetworkModule();
   initProjectProbModule();
   initModals();
   initMasterExport();
@@ -62,6 +65,9 @@ function switchTab(tabId) {
   // Si se abre el CPM, ajustar el diagrama
   if (tabId === 'tab-cpm' && lastCpmResult && diagramRendererInstance) {
     setTimeout(() => diagramRendererInstance.draw(), 50);
+  }
+  if (tabId === 'tab-pert' && lastPertDiagramResult && pertDiagramRendererInstance) {
+    setTimeout(() => pertDiagramRendererInstance.draw(), 50);
   }
   // Si se abre probabilidad de proyecto, actualizar gráficos
   if (tabId === 'tab-proj-prob') {
@@ -274,6 +280,7 @@ function renderPertTable() {
   });
 
   updateProjectProbSelect();
+  updatePertNetworkDiagram();
 }
 
 function updatePertCell(index, field, value) {
@@ -327,6 +334,84 @@ function syncPertToCpm() {
 
   loadActivitiesIntoCPM(cpmActivities);
   switchTab('tab-cpm');
+}
+
+function initPertNetworkModule() {
+  pertDiagramRendererInstance = new DiagramRenderer('pert-svg', 'pert-diagram-container', 'diagrama_pert_aon');
+
+  const btnZoomIn = document.getElementById('btn-pert-zoom-in');
+  const btnZoomOut = document.getElementById('btn-pert-zoom-out');
+  const btnResetView = document.getElementById('btn-pert-reset-view');
+  const btnExportPng = document.getElementById('btn-pert-export-png');
+  const btnExportSvg = document.getElementById('btn-pert-export-svg');
+
+  if (btnZoomIn) btnZoomIn.addEventListener('click', () => pertDiagramRendererInstance.zoomBy(1.2));
+  if (btnZoomOut) btnZoomOut.addEventListener('click', () => pertDiagramRendererInstance.zoomBy(0.8));
+  if (btnResetView) btnResetView.addEventListener('click', () => pertDiagramRendererInstance.resetView());
+  if (btnExportPng) btnExportPng.addEventListener('click', () => pertDiagramRendererInstance.exportPNG());
+  if (btnExportSvg) btnExportSvg.addEventListener('click', () => pertDiagramRendererInstance.exportSVG());
+
+  updatePertNetworkDiagram();
+}
+
+function buildPertNetworkResult() {
+  const items = pertActivities
+    .map(act => {
+      const a = parseFloat(act.a) || 0;
+      const m = parseFloat(act.m) || 0;
+      const b = parseFloat(act.b) || 0;
+      return {
+        id: String(act.partida || '').trim().toUpperCase(),
+        name: String(act.partida || '').trim().toUpperCase(),
+        predecessors: act.predecesora,
+        duration: (a + 4 * m + b) / 6
+      };
+    })
+    .filter(item => item.id);
+
+  if (items.length === 0) return null;
+  const result = CPMEngine.calculate(items, { preserveDecimals: true });
+  result.diagramType = 'pert';
+  return result;
+}
+
+function updatePertNetworkDiagram() {
+  if (!pertDiagramRendererInstance) return;
+
+  const alertBox = document.getElementById('pert-network-error');
+  if (alertBox) alertBox.style.display = 'none';
+
+  if (pertActivities.length === 0) {
+    lastPertDiagramResult = null;
+    if (alertBox) {
+      alertBox.textContent = 'No hay actividades PERT para generar el diagrama.';
+      alertBox.style.display = 'block';
+    }
+    return;
+  }
+
+  try {
+    const result = buildPertNetworkResult();
+    lastPertDiagramResult = result;
+    pertDiagramRendererInstance.render(result);
+
+    document.getElementById('val-pert-total-time').textContent = `${fmt(result.projectDuration, 2)} días`;
+    if (result.criticalPaths && result.criticalPaths.length > 0) {
+      const cp = result.criticalPaths[0];
+      document.getElementById('val-pert-critical-chain').textContent = cp.join(' → ');
+      const formulaStr = cp.map(id => fmt(result.activities[id].duration, 2)).join(' + ') + ` = ${fmt(result.projectDuration, 2)} días`;
+      document.getElementById('val-pert-critical-formula').textContent = formulaStr;
+    } else {
+      document.getElementById('val-pert-critical-chain').textContent = 'No determinada';
+      document.getElementById('val-pert-critical-formula').textContent = '';
+    }
+  } catch (err) {
+    lastPertDiagramResult = null;
+    if (alertBox) {
+      alertBox.textContent = `⚠️ No se pudo generar el diagrama PERT: ${err.message}`;
+      alertBox.style.display = 'block';
+    }
+  }
 }
 
 // ==========================================

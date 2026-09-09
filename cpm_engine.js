@@ -2,11 +2,13 @@
  * CPM Engine - Motor de Cálculo para el Método de la Ruta Crítica
  */
 class CPMEngine {
-  static calculate(rawActivities) {
+  static calculate(rawActivities, options = {}) {
     if (!rawActivities || rawActivities.length === 0) {
       throw new Error("No se proporcionaron actividades para calcular.");
     }
 
+    const preserveDecimals = options.preserveDecimals === true;
+    const roundTime = value => preserveDecimals ? value : Math.round(value);
     const activities = {};
     const actList = [];
 
@@ -14,7 +16,8 @@ class CPMEngine {
       const id = String(item.id || '').trim().toUpperCase();
       if (!id) return;
 
-      const duration = Math.round(parseFloat(item.duration));
+      const parsedDuration = parseFloat(item.duration);
+      const duration = preserveDecimals ? parsedDuration : Math.round(parsedDuration);
       if (isNaN(duration) || duration < 0) {
         throw new Error(`La duración de la actividad '${id}' debe ser un número válido mayor o igual a 0.`);
       }
@@ -99,17 +102,17 @@ class CPMEngine {
           if (pred.EF > maxEF) maxEF = pred.EF;
           if (pred.layer > maxPredLayer) maxPredLayer = pred.layer;
         }
-        act.ES = Math.round(maxEF);
+          act.ES = roundTime(maxEF);
         act.layer = maxPredLayer + 1;
       }
-      act.EF = Math.round(act.ES + act.duration);
+      act.EF = roundTime(act.ES + act.duration);
     }
 
     // Duración total del proyecto
     let projectDuration = 0;
     for (const id of actList) {
       if (activities[id].EF > projectDuration) {
-        projectDuration = Math.round(activities[id].EF);
+        projectDuration = roundTime(activities[id].EF);
       }
     }
 
@@ -126,17 +129,17 @@ class CPMEngine {
           const succ = activities[succId];
           if (succ.LS < minLS) minLS = succ.LS;
         }
-        act.LF = Math.round(minLS);
+        act.LF = roundTime(minLS);
       }
-      act.LS = Math.round(act.LF - act.duration);
+      act.LS = roundTime(act.LF - act.duration);
 
       // Holguras
-      act.TF = Math.round(act.LS - act.ES);
+      act.TF = roundTime(act.LS - act.ES);
 
       let minSuccES = act.successors.length === 0 
         ? projectDuration 
         : Math.min(...act.successors.map(sId => activities[sId].ES));
-      act.FF = Math.round(minSuccES - act.EF);
+      act.FF = roundTime(minSuccES - act.EF);
 
       // Actividad crítica si Holgura Total es 0
       act.isCritical = Math.abs(act.TF) < 0.0001;

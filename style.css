@@ -1186,6 +1186,17 @@ body {
   flex-wrap: wrap;
 }
 
+.network-toolbar {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pert-network-card {
+  margin-top: 1.25rem;
+}
+
 .paste-help-text {
   font-size: 0.85rem;
   color: var(--text-muted);
