@@ -211,13 +211,8 @@
             <input type="checkbox" id="toggle-fractions">
             <span>Mostrar fracciones en Te</span>
           </label>
-          <div style="display: flex; align-items: center; gap: 0.4rem; margin-left: auto;">
-            <span>Decimales:</span>
-            <select id="decimal-places" style="padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
-              <option value="2" selected>2 decimales</option>
-              <option value="3">3 decimales</option>
-              <option value="4">4 decimales</option>
-            </select>
+          <div style="display: flex; align-items: center; gap: 0.4rem; margin-left: auto; color: var(--text-muted); font-size: 0.82rem;">
+            <span>Resultados: <strong>1 decimal</strong> (redondeo matemático)</span>
           </div>
         </div>
 
@@ -248,9 +243,9 @@
                 <td id="total-a" class="num-cell">0.0</td>
                 <td id="total-m" class="num-cell">0.0</td>
                 <td id="total-b" class="num-cell">0.0</td>
-                <td id="total-te" class="num-cell highlight-te">0.00</td>
-                <td id="total-var" class="num-cell extra-col">0.00</td>
-                <td id="total-sd" class="num-cell extra-col">0.00</td>
+                <td id="total-te" class="num-cell highlight-te">0,0</td>
+                <td id="total-var" class="num-cell extra-col">0,0</td>
+                <td id="total-sd" class="num-cell extra-col">0,0</td>
                 <td></td>
               </tr>
             </tfoot>

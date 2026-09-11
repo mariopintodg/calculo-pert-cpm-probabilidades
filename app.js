@@ -3,6 +3,9 @@
  * Integración de cálculos, gráficos dinámicos SVG, sincronización y exportación Excel.
  */
 
+// Los resultados visibles de la ventana PERT se muestran con un decimal y redondeo matemático.
+const PERT_DISPLAY_DECIMALS = 1;
+
 // Datos iniciales para la tabla PERT (15 actividades estándar)
 const DEFAULT_PERT_DATA = [
   { partida: 'A', predecesora: '—', duracion: 5, a: 4, m: 5, b: 6 },
@@ -174,7 +177,6 @@ function initPertTable() {
   const btnSyncCpm = document.getElementById('btn-sync-cpm');
   const toggleStats = document.getElementById('toggle-stats');
   const toggleFractions = document.getElementById('toggle-fractions');
-  const decimalPlaces = document.getElementById('decimal-places');
 
   if (btnAddRow) btnAddRow.addEventListener('click', addPertRow);
   if (btnReset) btnReset.addEventListener('click', () => {
@@ -197,8 +199,6 @@ function initPertTable() {
 
   if (toggleStats) toggleStats.addEventListener('change', renderPertTable);
   if (toggleFractions) toggleFractions.addEventListener('change', renderPertTable);
-  if (decimalPlaces) decimalPlaces.addEventListener('change', renderPertTable);
-
   renderPertTable();
 }
 
@@ -209,7 +209,7 @@ function renderPertTable() {
 
   const showStats = document.getElementById('toggle-stats') ? document.getElementById('toggle-stats').checked : true;
   const showFractions = document.getElementById('toggle-fractions') ? document.getElementById('toggle-fractions').checked : false;
-  const decimals = parseInt(document.getElementById('decimal-places') ? document.getElementById('decimal-places').value : '2', 10);
+  const decimals = PERT_DISPLAY_DECIMALS;
 
   let sumDur = 0, sumA = 0, sumM = 0, sumB = 0, sumTe = 0, sumVar = 0;
 
@@ -242,7 +242,7 @@ function renderPertTable() {
       <td><input type="number" step="0.5" class="cell-input num-cell" value="${row.m}" onchange="updatePertCell(${index}, 'm', this.value)"></td>
       <td><input type="number" step="0.5" class="cell-input num-cell" value="${row.b}" onchange="updatePertCell(${index}, 'b', this.value)"></td>
       <td class="num-cell highlight-te cell-clickable" title="Clic para ver desglose paso a paso" onclick="showActivityDetail(${index}, 'te')">
-        ${showFractions && fracTe !== `${te.toFixed(decimals)}` ? `${fracTe} <small>(${fmt(te, decimals)})</small>` : fmt(te, decimals)}
+        ${showFractions && fracTe !== `${te.toFixed(PERT_DISPLAY_DECIMALS)}` ? `${fracTe} <small>(${fmt(te, decimals)})</small>` : fmt(te, decimals)}
       </td>
       <td class="num-cell extra-col cell-clickable ${showStats ? '' : 'd-none'}" title="Clic para ver desglose" onclick="showActivityDetail(${index}, 'var')">
         ${fmt(v, decimals)}
@@ -273,7 +273,7 @@ function renderPertTable() {
   const kpiSd = document.getElementById('kpi-total-sd');
   if (kpiActs) kpiActs.textContent = pertActivities.length;
   if (kpiTe) kpiTe.textContent = `${fmt(sumTe, 1)} d`;
-  if (kpiSd) kpiSd.textContent = `${fmt(totalSd, 2)} d`;
+  if (kpiSd) kpiSd.textContent = `${fmt(totalSd, PERT_DISPLAY_DECIMALS)} d`;
 
   document.querySelectorAll('.extra-col').forEach(el => {
     el.style.display = showStats ? '' : 'none';
@@ -395,11 +395,11 @@ function updatePertNetworkDiagram() {
     lastPertDiagramResult = result;
     pertDiagramRendererInstance.render(result);
 
-    document.getElementById('val-pert-total-time').textContent = `${fmt(result.projectDuration, 2)} días`;
+    document.getElementById('val-pert-total-time').textContent = `${fmt(result.projectDuration, PERT_DISPLAY_DECIMALS)} días`;
     if (result.criticalPaths && result.criticalPaths.length > 0) {
       const cp = result.criticalPaths[0];
       document.getElementById('val-pert-critical-chain').textContent = cp.join(' → ');
-      const formulaStr = cp.map(id => fmt(result.activities[id].duration, 2)).join(' + ') + ` = ${fmt(result.projectDuration, 2)} días`;
+      const formulaStr = cp.map(id => fmt(result.activities[id].duration, PERT_DISPLAY_DECIMALS)).join(' + ') + ` = ${fmt(result.projectDuration, PERT_DISPLAY_DECIMALS)} días`;
       document.getElementById('val-pert-critical-formula').textContent = formulaStr;
     } else {
       document.getElementById('val-pert-critical-chain').textContent = 'No determinada';
@@ -920,7 +920,7 @@ window.showActivityDetail = function(index, type) {
         <p class="math-tex">T<sub>e</sub> = (a + 4m + b) / 6</p>
         <p><strong>Reemplazo:</strong></p>
         <p class="math-tex">T<sub>e</sub> = (${a} + 4(${m}) + ${b}) / 6 = (${a} + ${4 * m} + ${b}) / 6 = ${(a + 4 * m + b)} / 6</p>
-        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmt(te, 4)} días</strong></p>
+        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmt(te, PERT_DISPLAY_DECIMALS)} días</strong></p>
       </div>
     `;
   } else if (type === 'var') {
@@ -931,7 +931,7 @@ window.showActivityDetail = function(index, type) {
         <p class="math-tex">&sigma;<sup>2</sup> = ((b - a) / 6)<sup>2</sup> = (b - a)<sup>2</sup> / 36</p>
         <p><strong>Reemplazo:</strong></p>
         <p class="math-tex">&sigma;<sup>2</sup> = ((${b} - ${a}) / 6)<sup>2</sup> = (${diff} / 6)<sup>2</sup> = ${diff * diff} / 36</p>
-        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmt(v, 4)} días<sup>2</sup></strong></p>
+        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmt(v, PERT_DISPLAY_DECIMALS)} días<sup>2</sup></strong></p>
       </div>
     `;
   } else if (type === 'sd') {
@@ -942,7 +942,7 @@ window.showActivityDetail = function(index, type) {
         <p class="math-tex">&sigma; = &radic;&sigma;<sup>2</sup> = (b - a) / 6</p>
         <p><strong>Reemplazo:</strong></p>
         <p class="math-tex">&sigma; = (${b} - ${a}) / 6 = ${diff} / 6</p>
-        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmt(sd, 4)} días</strong></p>
+        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmt(sd, PERT_DISPLAY_DECIMALS)} días</strong></p>
       </div>
     `;
   }

@@ -232,7 +232,7 @@ class DiagramRenderer {
     textDur.setAttribute("font-weight", "600");
     textDur.setAttribute("fill", textColor);
     const isPertDiagram = this.data && this.data.diagramType === 'pert';
-    const formatPertTime = value => Number(value).toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const formatPertTime = value => Number(value).toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const durationText = isPertDiagram ? formatPertTime(act.duration) : Math.round(act.duration);
     textDur.textContent = `${isPertDiagram ? 'Te=' : 'd='}${durationText}`;
     g.appendChild(textDur);
