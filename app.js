@@ -3,8 +3,15 @@
  * Integración de cálculos, gráficos dinámicos SVG, sincronización y exportación Excel.
  */
 
-// Los resultados visibles de la ventana PERT se muestran con un decimal y redondeo matemático.
+// Los tiempos visibles de la ventana PERT se muestran con un decimal y redondeo matemático.
 const PERT_DISPLAY_DECIMALS = 1;
+
+// La varianza se muestra con un decimal, tomando solo las primeras cifras sin redondear.
+function fmtTruncated(num, decimals = PERT_DISPLAY_DECIMALS) {
+  const factor = 10 ** decimals;
+  const truncated = Math.trunc((Number(num) + Number.EPSILON) * factor) / factor;
+  return fmt(truncated, decimals);
+}
 
 // Datos iniciales para la tabla PERT (15 actividades estándar)
 const DEFAULT_PERT_DATA = [
@@ -245,7 +252,7 @@ function renderPertTable() {
         ${showFractions && fracTe !== `${te.toFixed(PERT_DISPLAY_DECIMALS)}` ? `${fracTe} <small>(${fmt(te, decimals)})</small>` : fmt(te, decimals)}
       </td>
       <td class="num-cell extra-col cell-clickable ${showStats ? '' : 'd-none'}" title="Clic para ver desglose" onclick="showActivityDetail(${index}, 'var')">
-        ${fmt(v, decimals)}
+        ${fmtTruncated(v, decimals)}
       </td>
       <td class="num-cell extra-col cell-clickable ${showStats ? '' : 'd-none'}" title="Clic para ver desglose" onclick="showActivityDetail(${index}, 'sd')">
         ${fmt(sd, decimals)}
@@ -264,7 +271,7 @@ function renderPertTable() {
   document.getElementById('total-m').textContent = fmt(sumM, 1);
   document.getElementById('total-b').textContent = fmt(sumB, 1);
   document.getElementById('total-te').textContent = fmt(sumTe, decimals);
-  document.getElementById('total-var').textContent = fmt(sumVar, decimals);
+  document.getElementById('total-var').textContent = fmtTruncated(sumVar, decimals);
   document.getElementById('total-sd').textContent = fmt(totalSd, decimals);
 
   // Tarjetas KPI de cabecera PERT
@@ -931,7 +938,7 @@ window.showActivityDetail = function(index, type) {
         <p class="math-tex">&sigma;<sup>2</sup> = ((b - a) / 6)<sup>2</sup> = (b - a)<sup>2</sup> / 36</p>
         <p><strong>Reemplazo:</strong></p>
         <p class="math-tex">&sigma;<sup>2</sup> = ((${b} - ${a}) / 6)<sup>2</sup> = (${diff} / 6)<sup>2</sup> = ${diff * diff} / 36</p>
-        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmt(v, PERT_DISPLAY_DECIMALS)} días<sup>2</sup></strong></p>
+        <p><strong>Resultado final:</strong> <strong class="highlight-val">${fmtTruncated(v, PERT_DISPLAY_DECIMALS)} días<sup>2</sup></strong></p>
       </div>
     `;
   } else if (type === 'sd') {
