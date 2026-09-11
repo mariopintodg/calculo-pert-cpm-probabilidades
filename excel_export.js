@@ -280,9 +280,9 @@ const ExcelExporter = {
     // HOJA 2: TABLA PERT
     if (pertActivities && pertActivities.length > 0) {
       const pertData = [
-        ["TABLA DE ESTIMACIÓN PERT (PARTIDAS, DURACIÓN Y PARÁMETROS a, m, b)", "", "", "", "", "", "", "", ""],
+        ["TABLA DE ESTIMACIÓN PERT (PARTIDAS, DURACIÓN Y PARÁMETROS a, b, m)", "", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", "", ""],
-        ["PARTIDA", "PREDECESORA", "DURACIÓN (m)", "a (optimista)", "m (probable)", "b (pesimista)", "Te (Esperado)", "Varianza (σ²)", "Desv. (σ)"]
+        ["PARTIDA", "PREDECESORA", "DURACIÓN (m)", "a (optimista)", "b (pesimista)", "m (probable)", "Te (Esperado)", "Varianza (σ²)", "Desv. (σ)"]
       ];
       let sumD = 0, sumTe = 0, sumV = 0;
       pertActivities.forEach(act => {
@@ -294,7 +294,7 @@ const ExcelExporter = {
         const sd = (b - a) / 6;
         const dur = parseFloat(act.duracion) || 0;
         sumD += dur; sumTe += te; sumV += v;
-        pertData.push([act.partida, act.predecesora, dur, a, m, b, Number(te.toFixed(4)), Number(v.toFixed(4)), Number(sd.toFixed(4))]);
+        pertData.push([act.partida, act.predecesora, dur, a, b, m, Number(te.toFixed(4)), Number(v.toFixed(4)), Number(sd.toFixed(4))]);
       });
       pertData.push(["", "", "", "", "", "", "", "", ""]);
       pertData.push(["TOTALES", "—", sumD, "—", "—", "—", Number(sumTe.toFixed(4)), Number(sumV.toFixed(4)), Number(Math.sqrt(sumV).toFixed(4))]);
