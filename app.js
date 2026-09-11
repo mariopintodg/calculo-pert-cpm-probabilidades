@@ -239,8 +239,8 @@ function renderPertTable() {
       <td><input type="text" class="cell-input col-pred" value="${row.predecesora}" onchange="updatePertCell(${index}, 'predecesora', this.value)"></td>
       <td><input type="number" step="0.5" class="cell-input num-cell" value="${row.duracion}" onchange="updatePertCell(${index}, 'duracion', this.value)"></td>
       <td><input type="number" step="0.5" class="cell-input num-cell" value="${row.a}" onchange="updatePertCell(${index}, 'a', this.value)"></td>
-      <td><input type="number" step="0.5" class="cell-input num-cell" value="${row.m}" onchange="updatePertCell(${index}, 'm', this.value)"></td>
       <td><input type="number" step="0.5" class="cell-input num-cell" value="${row.b}" onchange="updatePertCell(${index}, 'b', this.value)"></td>
+      <td><input type="number" step="0.5" class="cell-input num-cell" value="${row.m}" onchange="updatePertCell(${index}, 'm', this.value)"></td>
       <td class="num-cell highlight-te cell-clickable" title="Clic para ver desglose paso a paso" onclick="showActivityDetail(${index}, 'te')">
         ${showFractions && fracTe !== `${te.toFixed(PERT_DISPLAY_DECIMALS)}` ? `${fracTe} <small>(${fmt(te, decimals)})</small>` : fmt(te, decimals)}
       </td>
@@ -965,19 +965,33 @@ function applyPasteData() {
 
   const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
   const newActs = [];
+  let dataColumns = { duration: 2, a: 3, b: 4, m: 5 };
 
   lines.forEach(line => {
     const cols = line.split(/[\t;]+/).map(c => c.trim());
-    if (/partida|duraci[oó]n|optimista/i.test(cols[0])) return;
+    const normalizedHeader = cols.join(' ').toLowerCase();
+    if (/partida|duraci[oó]n|optimista|pesimista|probable/i.test(normalizedHeader) && /partida|duraci[oó]n/i.test(normalizedHeader)) {
+      const findColumn = (pattern, fallback) => {
+        const index = cols.findIndex(col => pattern.test(col.toLowerCase()));
+        return index >= 0 ? index : fallback;
+      };
+      dataColumns = {
+        duration: findColumn(/duraci[oó]n/, 2),
+        a: findColumn(/optimista|^a(?:\s|$)/, 3),
+        b: findColumn(/pesimista|^b(?:\s|$)/, 4),
+        m: findColumn(/probable|^m(?:\s|$)/, 5)
+      };
+      return;
+    }
 
     if (cols.length >= 4) {
       newActs.push({
         partida: cols[0].toUpperCase(),
         predecesora: cols[1] || '—',
-        duracion: parseFloat(cols[2]) || 0,
-        a: parseFloat(cols[cols.length - 3]) || 0,
-        m: parseFloat(cols[cols.length - 2]) || 0,
-        b: parseFloat(cols[cols.length - 1]) || 0
+        duracion: parseFloat(cols[dataColumns.duration]) || 0,
+        a: parseFloat(cols[dataColumns.a]) || 0,
+        b: parseFloat(cols[dataColumns.b]) || 0,
+        m: parseFloat(cols[dataColumns.m]) || 0
       });
     }
   });
@@ -993,7 +1007,7 @@ function applyPasteData() {
 }
 
 function exportPertToCsv() {
-  let csv = 'PARTIDAS;PREDECESORA;DURACION;a;m;b;Te;Varianza;Desviacion\n';
+  let csv = 'PARTIDAS;PREDECESORA;DURACION;a (optimista);b (pesimista);m (probable);Te;Varianza;Desviacion\n';
   pertActivities.forEach(act => {
     const a = parseFloat(act.a) || 0;
     const m = parseFloat(act.m) || 0;
@@ -1001,7 +1015,7 @@ function exportPertToCsv() {
     const te = (a + 4 * m + b) / 6;
     const v = Math.pow((b - a) / 6, 2);
     const sd = (b - a) / 6;
-    csv += `${act.partida};${act.predecesora};${act.duracion};${a};${m};${b};${te.toFixed(2)};${v.toFixed(2)};${sd.toFixed(2)}\n`;
+    csv += `${act.partida};${act.predecesora};${act.duracion};${a};${b};${m};${te.toFixed(2)};${v.toFixed(2)};${sd.toFixed(2)}\n`;
   });
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
