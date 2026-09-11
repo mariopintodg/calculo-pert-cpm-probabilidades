@@ -225,8 +225,8 @@
                 <th style="width: 16%;">PREDECESORA</th>
                 <th style="width: 11%; text-align: right;">DURACIÓN (m)</th>
                 <th style="width: 10%; text-align: right;">a (optimista)</th>
-                <th style="width: 10%; text-align: right;">m (probable)</th>
                 <th style="width: 10%; text-align: right;">b (pesimista)</th>
+                <th style="width: 10%; text-align: right;">m (probable)</th>
                 <th style="width: 13%; text-align: right; background: #e0e7ff; color: #1e3a8a;">Te (Esperado)</th>
                 <th class="extra-col" style="width: 10%; text-align: right;">Varianza (&sigma;&sup2;)</th>
                 <th class="extra-col" style="width: 10%; text-align: right;">Desv. (&sigma;)</th>
@@ -241,8 +241,8 @@
                 <td colspan="2"><strong>TOTALES DEL PROYECTO</strong></td>
                 <td id="total-duracion" class="num-cell">0.0</td>
                 <td id="total-a" class="num-cell">0.0</td>
-                <td id="total-m" class="num-cell">0.0</td>
                 <td id="total-b" class="num-cell">0.0</td>
+                <td id="total-m" class="num-cell">0.0</td>
                 <td id="total-te" class="num-cell highlight-te">0,0</td>
                 <td id="total-var" class="num-cell extra-col">0,0</td>
                 <td id="total-sd" class="num-cell extra-col">0,0</td>
@@ -579,7 +579,7 @@
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
             Copia el rango de celdas en tu hoja de cálculo y pégalo aquí con <strong>Ctrl + V</strong>:
           </p>
-          <textarea id="paste-textarea" class="excel-textarea" placeholder="Pega aquí las filas copiadas de Excel...&#10;&#10;Ejemplo:&#10;A	—	5	4	5	6&#10;B	A	3	2	3	4&#10;C	A	6	4	6	8"></textarea>
+          <textarea id="paste-textarea" class="excel-textarea" placeholder="Pega aquí las filas copiadas de Excel...&#10;&#10;Orden: Partida | Predecesora | Duración | A (optimista) | B (pesimista) | M (probable)&#10;&#10;Ejemplo:&#10;A	—	5	4	6	5&#10;B	A	3	2	4	3&#10;C	A	6	4	8	6"></textarea>
         </div>
         <div class="modal-footer">
           <button id="btn-cancel-paste" class="btn btn-outline">Cancelar</button>
@@ -646,11 +646,11 @@
 
   <!-- Scripts en orden de dependencia -->
   <script src="xlsx.full.min.js"></script>
-  <script src="excel_export.js"></script>
+    <script src="excel_export.js?v=2.3"></script>
   <script src="charts_module.js"></script>
   <script src="cpm_engine.js"></script>
   <script src="diagram_renderer.js?v=2.2"></script>
   <script src="probability_module.js"></script>
-  <script src="app.js?v=2.2"></script>
+    <script src="app.js?v=2.3"></script>
 </body>
 </html>
