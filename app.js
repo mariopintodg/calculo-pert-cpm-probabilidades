@@ -6,6 +6,12 @@
 // Los tiempos visibles de la ventana PERT se muestran con un decimal y redondeo matemático.
 const PERT_DISPLAY_DECIMALS = 1;
 
+// La red PERT usa como duración numérica el mismo Te visible en la tabla.
+function roundToPertDisplay(value) {
+  const factor = 10 ** PERT_DISPLAY_DECIMALS;
+  return Math.round((Number(value) + Number.EPSILON) * factor) / factor;
+}
+
 // La varianza se muestra con un decimal, tomando solo las primeras cifras sin redondear.
 function fmtTruncated(num, decimals = PERT_DISPLAY_DECIMALS) {
   const factor = 10 ** decimals;
@@ -335,7 +341,7 @@ function syncPertToCpm() {
       id: act.partida.trim().toUpperCase(),
       name: act.partida.trim().toUpperCase(),
       predecessors: act.predecesora,
-      duration: Math.round(te * 100) / 100
+      duration: te
     };
   });
 
@@ -371,7 +377,7 @@ function buildPertNetworkResult() {
         id: String(act.partida || '').trim().toUpperCase(),
         name: String(act.partida || '').trim().toUpperCase(),
         predecessors: act.predecesora,
-        duration: (a + 4 * m + b) / 6
+        duration: roundToPertDisplay((a + 4 * m + b) / 6)
       };
     })
     .filter(item => item.id);
