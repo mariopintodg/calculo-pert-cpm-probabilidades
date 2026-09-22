@@ -52,6 +52,79 @@
     '13_Control_Terminaciones': 'PP es presupuesto planificado, CR costo real, VG valor ganado, VC = VG − CR e IRC = VG / CR.',
   };
 
+  const METHODOLOGY = {
+    home: {
+      source: 'La portada toma los datos generales de metadata y de las actividades del archivo Excel convertido a data.js. La hoja 14 de parámetros no se carga en esta aplicación.',
+      calculation: 'Los indicadores de plazo, oferta, ahorro y PERT son resúmenes de los módulos. El plazo contractual es 150 días corridos desde el 02-11-2026; la fecha de término se obtiene sumando días calendario.',
+      correlation: 'La secuencia de lectura es: Roles y Rendimientos → CPM → PERT/Gantt → Presupuesto → Curvas S/Flujo → Compromisos/EEPP → Riesgos/Control. Si se cambia una duración o la fecha de inicio, las vistas dependientes se actualizan al recalcular.'
+    },
+    '01': {
+      source: 'La imagen corresponde al organigrama original entregado para el proyecto Sede Social El Bosque, conservado como referencia gráfica.',
+      calculation: 'No genera montos ni duraciones: define la jerarquía de autoridad, coordinación y ejecución. Por eso se presenta como estructura de gobierno del proyecto.',
+      correlation: 'Cada cargo del organigrama debe coincidir con la Matriz de Roles. Esos responsables reaparecen en Rendimientos, Compromisos, Riesgos, EEPP y Control.'
+    },
+    '02': {
+      source: 'Se trasladan las filas de la hoja 02_Matriz Roles: cargo, dependencia, funciones y entregables/KPI.',
+      calculation: 'No hay una fórmula monetaria; la matriz convierte la estructura del organigrama en responsabilidades verificables. El KPI es el resultado que permite comprobar si el cargo cumplió.',
+      correlation: 'La dependencia explica quién valida o recibe cada entrega. Los responsables alimentan el Lookahead/Compromisos, las acciones de Riesgos y los controles de calidad, seguridad y avance.'
+    },
+    '03': {
+      source: 'La hoja 03_Rendimientos aporta cantidad cubicada, unidad, rendimiento diario, tipo de cuadrilla y número de cuadrillas para cada partida.',
+      calculation: 'Duración base = Cantidad ÷ (Rendimiento diario × N° de cuadrillas). La duración planificada además considera precedencias, frentes paralelos, coordinación y la meta contractual de 150 días.',
+      correlation: 'La duración planificada se convierte en duración CPM. Las predecesoras ordenan la red; el resultado alimenta las fechas de Gantt, la secuencia PERT y la distribución de costos/avance.'
+    },
+    '04': {
+      source: 'CPM utiliza las 22 actividades del proyecto, sus predecesoras y las duraciones determinísticas provenientes de Rendimientos.',
+      calculation: 'Pasada hacia adelante: IT = máximo FT de las predecesoras y FT = IT + duración. Pasada hacia atrás: FTa = mínimo ITa de las sucesoras e ITa = FTa − duración. Holgura total = ITa − IT; si es 0, la actividad es crítica.',
+      correlation: 'La ruta crítica alimenta las barras rojas de la Gantt, la red PERT y la priorización de riesgos. Cambiar duración o predecesora modifica la red, las holguras y el término calculado.'
+    },
+    '05': {
+      source: 'La Gantt toma las actividades, EDT, macro-etapa, precedencias y tiempos calculados en CPM o en PERT esperado.',
+      calculation: 'Fecha inicio = fecha contractual + IT. Fecha fin = fecha inicio + duración − 1 día. La barra se ubica con IT/escala y su ancho es duración/escala; rojo identifica holgura cero.',
+      correlation: 'CPM determina la secuencia; PERT permite cambiar la base a tiempos esperados. La fecha editable de Inicio actualiza todas las fechas sin cambiar la lógica de precedencias.'
+    },
+    '06': {
+      source: 'PERT utiliza para cada actividad tres estimaciones: optimista to, más probable tm y pesimista tp, asociadas a clima, suministro, interferencias, permisos y recepción.',
+      calculation: 'Tiempo esperado te = (to + 4×tm + tp) ÷ 6. Varianza = ((tp − to) ÷ 6)² y desviación estándar = √varianza. La red se calcula con las mismas predecesoras, reemplazando la duración CPM por te.',
+      correlation: 'La amplitud tp−to representa incertidumbre real y se vincula con Riesgos. El te alimenta la red PERT y puede seleccionarse como base de la Gantt; por eso el término esperado puede superar los 150 días contractuales.'
+    },
+    '07': {
+      source: 'El detalle de partidas proviene de la hoja de presupuesto: cantidades, precios unitarios, costo directo y venta neta. El presupuesto municipal se usa como techo de comparación.',
+      calculation: 'Subtotal neto = Costo directo × (1 + GG + utilidad). Oferta compensada = Subtotal neto × (1 + IVA). Ahorro = Presupuesto municipal − Oferta compensada. Los porcentajes GG, utilidad e IVA son editables.',
+      correlation: 'Las partidas valorizadas se relacionan con actividades, fechas y EEPP. El costo directo alimenta Curvas S y Flujo de caja; la oferta compensada permite evaluar competitividad sin perder trazabilidad.'
+    },
+    '08': {
+      source: 'La curva usa las 22 semanas de avance físico, costo directo acumulado y venta neta acumulada de la hoja 08_Curvas_S.',
+      calculation: 'El avance físico se expresa como porcentaje acumulado. Costo directo y venta neta se normalizan contra su máximo acumulado para comparar las tres magnitudes en una escala común de 0% a 100%.',
+      correlation: 'El físico se relaciona con las duraciones y el avance de actividades; el costo directo viene del Presupuesto; la venta neta se conecta con EEPP y Flujo de caja. La separación entre curvas ayuda a detectar desfases.'
+    },
+    '09': {
+      source: 'El flujo mensual toma cobros, materiales, sueldos, subcontratos, equipos, gastos generales y saldos de la hoja 09_Flujo_Caja.',
+      calculation: 'Saldo operativo = cobros − egresos. Saldo acumulado = saldo acumulado anterior + saldo operativo. Necesidad de capital = máximo déficit acumulado; ese máximo es el capital de trabajo requerido.',
+      correlation: 'Los cobros dependen de EEPP y la producción de Gantt/Curva S. Los egresos dependen del Presupuesto y del avance. Riesgos de suministro o atraso pueden aumentar egresos y desplazar cobros.'
+    },
+    '10': {
+      source: 'La hoja 10_Lookahead se muestra en español como Compromisos y contiene una ventana de 14 días, responsables, recursos, materiales, permisos y accesos.',
+      calculation: 'No calcula una duración nueva: transforma actividades próximas en restricciones verificables. “Cumplimiento real” y “Liberación” son estados editables para controlar si la actividad está lista.',
+      correlation: 'Cada compromiso debe corresponder a una actividad de la Gantt, a un responsable de Roles y, cuando corresponda, a un riesgo. Liberar restricciones protege la fecha de inicio y evita retrabajos.'
+    },
+    '11': {
+      source: 'EEPP usa las partidas de obra gruesa, cantidades contractuales, cantidades del período, avances acumulados, valorizaciones y saldos de la hoja 11_EEPP_Obra_Gruesa.',
+      calculation: 'Avance acumulado = avance anterior + avance del período. Saldo de cantidad = cantidad contractual − acumulada. La valorización del período se obtiene de la cantidad aprobada por su precio de venta; se recomienda validar cada medición con ITO.',
+      correlation: 'EEPP convierte avance físico en cobro y conecta Gantt/Curva S con Flujo de caja. El costo y el avance real alimentan la lectura de Control de valor ganado.'
+    },
+    '12': {
+      source: 'La matriz usa eventos externos de Andacollo, probabilidad P de 1 a 5, impacto I de 1 a 5, responsable y respuesta.',
+      calculation: 'Nivel de riesgo = P × I. Nivel 1–4 bajo, 5–9 moderado, 10–16 alto y 17–25 crítico. La prevención reduce la probabilidad; la contingencia reduce el impacto cuando se activa el evento.',
+      correlation: 'Los riesgos justifican los rangos to/tm/tp de PERT y se vinculan con actividades afectadas, responsables de Roles y restricciones del Lookahead. El mapa prioriza qué debe gestionarse primero.'
+    },
+    '13': {
+      source: 'Control utiliza presupuesto por terminación, porcentaje planificado, avance medido y costo real incurrido de la hoja 13_Control_Terminaciones.',
+      calculation: 'PP = presupuesto × plan. VG = presupuesto × avance medido. VC = VG − CR. IRC = VG ÷ CR. IRC menor que 1 indica que el costo real está superando el valor ganado; el semáforo marca dónde intervenir.',
+      correlation: 'Presupuesto entrega la base económica; Gantt y EEPP entregan plan y avance; Flujo muestra caja; Riesgos explica causas posibles. Por eso Control es la lectura final de desempeño, no una tabla aislada.'
+    },
+  };
+
   const state = {
     tab: 'home',
     activities: D.activities.map((activity) => ({ ...activity })),
@@ -103,6 +176,7 @@
     else if (state.tab === '12') target.innerHTML = riesgosView();
     else if (state.tab === '13') target.innerHTML = controlView();
     else target.innerHTML = genericSheetView(TABS.find((item) => item[0] === state.tab)?.[2]);
+    target.innerHTML += methodologyBlock(state.tab);
     bindCommon();
     if (state.tab === '04') bindCPM();
     if (state.tab === '05') bindGantt();
@@ -134,6 +208,11 @@
       <div class="card"><div class="card-head"><div><span class="overline">Control editable</span><h3>Fecha de inicio del proyecto</h3><p>Modificarla actualiza las fechas de la Gantt.</p></div></div><div class="card-body"><label class="field-label" for="projectStart">Inicio contractual</label><input class="large-input" id="projectStart" type="date" value="${esc(state.startDate)}"><div class="formula-card"><strong>Ruta crítica inicial</strong><span>A → B → D → E → F → G → I → J → L → Q → R → T → V</span></div><div class="source-line">Los precios, avances simulados y supuestos están explicados dentro de sus módulos.</div></div></div>
     </div>
     <div class="card guidance-card"><div class="card-head"><div><span class="overline">Guía de lectura</span><h3>Qué significa cada módulo</h3></div></div><div class="card-body"><div class="guide-columns"><div><b>CPM</b><span>Secuencia, holguras y camino que gobierna el plazo.</span></div><div><b>PERT</b><span>Rango optimista, probable y pesimista de cada partida.</span></div><div><b>Gantt</b><span>Fechas y barras de ejecución para presentar el plan.</span></div><div><b>Control</b><span>Presupuesto, caja, riesgos, estados de pago y valor ganado.</span></div></div></div></div>`;
+  }
+
+  function methodologyBlock(tab) {
+    const item = METHODOLOGY[tab] || METHODOLOGY.home;
+    return `<details class="methodology-card"><summary><span class="methodology-mark">?</span><span><strong>Cómo se hizo esta hoja</strong><small>Fuente de datos · cálculo · correlación con el proyecto</small></span><span class="methodology-chevron">⌄</span></summary><div class="methodology-body"><article><span class="overline">01 · Fuente</span><p>${esc(item.source)}</p></article><article><span class="overline">02 · Cálculo</span><p>${esc(item.calculation)}</p></article><article><span class="overline">03 · Correlación</span><p>${esc(item.correlation)}</p></article></div></details>`;
   }
 
   function organigramaView() {
@@ -204,7 +283,7 @@
 
   function cpmResultsTable(activities, calc) { return `<table><thead><tr><th>Partida</th><th>Predecesoras</th><th>Duración</th><th>IT</th><th>FT</th><th>ITa</th><th>FTa</th><th>Holgura total</th><th>Holgura libre</th><th>Crítica</th></tr></thead><tbody>${activities.map((activity) => { const row = calc.byId[activity.id]; const critical = Math.abs(row.slack) < .0001; return `<tr class="${critical ? 'critical-row' : ''}"><td><strong>${esc(activity.id)}</strong><br><small>${esc(activity.name)}</small></td><td>${esc(activity.pred || '—')}</td><td>${num(row.duration)}</td><td>${num(row.ES)}</td><td>${num(row.EF)}</td><td>${num(row.LS)}</td><td>${num(row.LF)}</td><td><strong>${num(row.slack)}</strong></td><td>${num(row.free)}</td><td><span class="tag ${critical ? 'tag-critical' : 'tag-normal'}">${critical ? 'SÍ' : 'NO'}</span></td></tr>`; }).join('')}</tbody></table>`; }
 
-  function networkControls(kind) { return `<div class="network-controls"><span class="network-help">Mueve los nodos con el mouse · zoom de lectura</span><button class="icon-button" data-network-action="minus" data-kind="${kind}" aria-label="Alejar">−</button><span class="zoom-label" data-zoom-label="${kind}">${Math.round(state.zoom[kind] * 100)}%</span><button class="icon-button" data-network-action="plus" data-kind="${kind}" aria-label="Acercar">+</button><button class="button button-light button-small" data-network-action="reset" data-kind="${kind}">Reordenar</button></div>`; }
+  function networkControls(kind) { return `<div class="network-controls"><span class="network-help">Mueve los nodos libremente dentro del lienzo · zoom 45–220%</span><button class="icon-button" data-network-action="minus" data-kind="${kind}" aria-label="Alejar">−</button><span class="zoom-label" data-zoom-label="${kind}">${Math.round(state.zoom[kind] * 100)}%</span><button class="icon-button" data-network-action="plus" data-kind="${kind}" aria-label="Acercar">+</button><button class="button button-light button-small" data-network-action="reset" data-kind="${kind}">Reordenar</button></div>`; }
 
   function networkLayout(activities, calc, kind) {
     const rank = {};
@@ -214,11 +293,11 @@
     activities.forEach((activity) => (groups[rank[activity.id]] ||= []).push(activity.id));
     const maxRank = Math.max(...Object.keys(groups).map(Number), 0);
     const maxGroup = Math.max(...Object.values(groups).map((group) => group.length), 1);
-    const width = Math.max(1180, 150 + (maxRank + 1) * 176);
-    const height = Math.max(560, 170 + maxGroup * 112);
+    const width = Math.max(1650, 260 + (maxRank + 1) * 210);
+    const height = Math.max(820, 260 + maxGroup * 170);
     const stored = state.layouts[kind] || {};
     const positions = {};
-    Object.entries(groups).forEach(([rankNumber, ids]) => ids.forEach((id, index) => { const defaultPosition = { x: 84 + Number(rankNumber) * 170, y: 90 + index * 108 + Math.max(0, (height - 130 - ids.length * 108) / 2) }; positions[id] = stored[id] || defaultPosition; }));
+    Object.entries(groups).forEach(([rankNumber, ids]) => ids.forEach((id, index) => { const defaultPosition = { x: 130 + Number(rankNumber) * 205, y: 150 + index * 165 + Math.max(0, (height - 250 - ids.length * 165) / 2) }; positions[id] = stored[id] || defaultPosition; }));
     state.layouts[kind] = { ...stored, ...positions };
     return { positions, width, height };
   }
@@ -228,7 +307,7 @@
     const criticalIds = new Set(calc.critical);
     const edges = activities.flatMap((activity) => calc.succ[activity.id].map((successor) => { const p = layout.positions[activity.id]; const q = layout.positions[successor]; const critical = criticalIds.has(activity.id) && criticalIds.has(successor) && Math.abs(calc.byId[successor].ES - calc.byId[activity.id].EF) < 0.001; return `<path class="edge ${critical ? 'edge-critical' : ''}" data-edge-from="${esc(activity.id)}" data-edge-to="${esc(successor)}" d="${edgePath(p, q)}" marker-end="url(#arrow-${kind})"></path>`; })).join('');
     const nodes = activities.map((activity) => { const position = layout.positions[activity.id]; const result = calc.byId[activity.id]; const critical = criticalIds.has(activity.id); return `<g class="node ${critical ? 'node-critical' : ''}" data-node="${esc(activity.id)}" data-x="${position.x}" data-y="${position.y}" transform="translate(${position.x},${position.y})"><title>${esc(activity.id)} · ${esc(activity.name)}</title><circle r="31"></circle><text y="-5" class="node-id">${esc(activity.id)}</text><text y="12" class="node-d">d=${num(result.duration)}</text><text y="-44" class="node-time">${num(result.ES)} | ${num(result.EF)}</text><text y="49" class="node-time">${num(result.LS)} | ${num(result.LF)}</text></g>`; }).join('');
-    return `<div class="network-wrap"><svg class="network-svg" data-kind="${kind}" viewBox="0 0 ${layout.width} ${layout.height}" style="zoom:${state.zoom[kind]}" role="img" aria-label="Malla ${kind === 'cpm' ? 'CPM' : 'PERT'}"><defs><marker id="arrow-${kind}" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#4f8bd9"></path></marker></defs>${edges}${nodes}</svg></div>`;
+    return `<div class="network-wrap"><svg class="network-svg" data-kind="${kind}" viewBox="0 0 ${layout.width} ${layout.height}" style="width:${layout.width}px;height:${layout.height}px;zoom:${state.zoom[kind]}" role="img" aria-label="Malla ${kind === 'cpm' ? 'CPM' : 'PERT'}"><defs><marker id="arrow-${kind}" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#4f8bd9"></path></marker></defs>${edges}${nodes}</svg></div>`;
   }
 
   function edgePath(p, q) { const mid = (p.x + q.x) / 2; return `M ${p.x + 32} ${p.y} C ${mid} ${p.y}, ${mid} ${q.y}, ${q.x - 32} ${q.y}`; }
@@ -245,7 +324,7 @@
       node.addEventListener('pointerup', (event) => stopDrag(node, event));
       node.addEventListener('pointercancel', (event) => stopDrag(node, event));
     });
-    document.querySelectorAll(`[data-network-action][data-kind="${kind}"]`).forEach((button) => button.addEventListener('click', () => { const action = button.dataset.networkAction; if (action === 'reset') { state.layouts[kind] = {}; render(); return; } state.zoom[kind] = Math.max(.65, Math.min(1.5, state.zoom[kind] + (action === 'plus' ? .1 : -.1))); svg.style.zoom = state.zoom[kind]; const label = document.querySelector(`[data-zoom-label="${kind}"]`); if (label) label.textContent = Math.round(state.zoom[kind] * 100) + '%'; }));
+    document.querySelectorAll(`[data-network-action][data-kind="${kind}"]`).forEach((button) => button.addEventListener('click', () => { const action = button.dataset.networkAction; if (action === 'reset') { state.layouts[kind] = {}; render(); return; } state.zoom[kind] = Math.max(.45, Math.min(2.2, state.zoom[kind] + (action === 'plus' ? .15 : -.15))); svg.style.zoom = state.zoom[kind]; const label = document.querySelector(`[data-zoom-label="${kind}"]`); if (label) label.textContent = Math.round(state.zoom[kind] * 100) + '%'; }));
   }
 
   function bindCPM() {
