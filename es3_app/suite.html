@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suite ES3 · Sede Social El Bosque</title>
+  <meta name="description" content="Tablero visual de planificación, costos y control para la Sede Social El Bosque.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230d1b2a'/%3E%3Cpath d='M15 45V19h8v18h26v8H15Z' fill='%23f97316'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css?v=20260922-2">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark">ES3</div>
+    <div class="brand-copy">
+      <div class="eyebrow">PLANIFICACIÓN Y CONTROL DE OBRAS</div>
+      <h1>Suite ES3 · Sede Social El Bosque</h1>
+      <p>CPM, PERT, Gantt, costos y control del proyecto en una sola vista.</p>
+    </div>
+    <div class="top-actions">
+      <button class="button button-soft" id="exportView">↓ Exportar vista</button>
+      <span class="badge">150 días corridos</span>
+    </div>
+  </header>
+  <nav class="tabs" id="tabs" aria-label="Hojas del proyecto"></nav>
+  <main class="page-shell">
+    <section class="page-heading">
+      <div>
+        <div class="eyebrow" id="sectionEyebrow">PROYECTO CONSTRUCCIÓN</div>
+        <h2 id="sectionTitle">Resumen del proyecto</h2>
+        <p id="sectionSubtitle">Seleccione una hoja para revisar datos, cálculos y notas explicativas.</p>
+      </div>
+      <div class="source-chip">Fuente: <span id="sourceName"></span></div>
+    </section>
+    <section id="app"></section>
+  </main>
+  <footer class="footer">
+    <span>Modelo didáctico basado en el avance Excel del proyecto.</span>
+    <span>Los precios, avances simulados y supuestos están identificados dentro de sus módulos.</span>
+  </footer>
+  <script src="data.js?v=20260922-2"></script>
+  <script src="app.js?v=20260922-2"></script>
+</body>
+</html>
