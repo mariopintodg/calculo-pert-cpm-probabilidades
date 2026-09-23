@@ -31,8 +31,8 @@ button { cursor: pointer; }
 .brand-copy p { margin: 0; color: #bfcee0; font-size: 14px; }
 .eyebrow { font-size: 11px; letter-spacing: .13em; font-weight: 800; color: #86b9e7; }
 .top-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
-.institution-logo { flex: 0 0 188px; height: 74px; display: grid; place-items: center; padding: 6px 10px; border-radius: 12px; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.15); }
-.institution-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.institution-logo { flex: 0 0 224px; height: 78px; display: grid; place-items: center; padding: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.institution-logo img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 1px rgba(255,255,255,.92)) drop-shadow(0 4px 5px rgba(0,0,0,.28)); }
 .badge, .source-chip { display: inline-flex; align-items: center; padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; white-space: nowrap; }
 .badge { color: #ffcfab; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.17); }
 
@@ -43,10 +43,12 @@ button { cursor: pointer; }
 .button-soft { color: #174269; background: #eef6ff; border: 1px solid rgba(255,255,255,.35); }
 .button-light { color: var(--ink); background: white; border: 1px solid var(--line); }
 
-.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 14px clamp(20px, 5vw, 70px); background: #f8fbff; border-bottom: 1px solid #cbd9e8; box-shadow: 0 7px 21px rgba(15,34,61,.09); scrollbar-width: thin; }
-.tab { min-width: max-content; padding: 12px 15px; border: 1px solid #d2deeb; border-radius: 12px; color: #284766; background: #fff; font-size: 12px; font-weight: 900; box-shadow: 0 2px 6px rgba(15,34,61,.05); }
-.tab:hover { background: #eaf3ff; color: var(--navy-2); border-color: #9fbee0; }
-.tab.active { color: #a9460a; background: #fff0e5; border-color: #f2a169; box-shadow: 0 3px 8px rgba(197,91,14,.15); }
+.tabs { display: flex; gap: 10px; overflow-x: auto; padding: 16px clamp(20px, 5vw, 70px) 20px; background: linear-gradient(180deg, #f9fcff 0%, #eef5fb 100%); border-bottom: 1px solid #cbd9e8; box-shadow: 0 9px 23px rgba(15,34,61,.11); scrollbar-width: thin; }
+.tab { min-width: max-content; padding: 13px 16px; border: 1px solid #c8d6e5; border-radius: 13px; color: #284766; background: linear-gradient(180deg, #ffffff 0%, #edf4fb 100%); font-size: 12px; font-weight: 900; box-shadow: 0 4px 0 #c1cfde, 0 8px 14px rgba(15,34,61,.12), inset 0 1px 0 rgba(255,255,255,.96); transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease; }
+.tab:hover { transform: translateY(-2px); color: var(--navy-2); border-color: #8fb3d8; background: linear-gradient(180deg, #ffffff 0%, #e5f1ff 100%); box-shadow: 0 6px 0 #aebfd2, 0 12px 20px rgba(15,34,61,.16), inset 0 1px 0 rgba(255,255,255,.98); }
+.tab:active { transform: translateY(2px); box-shadow: 0 1px 0 #aebfd2, 0 3px 7px rgba(15,34,61,.12), inset 0 1px 0 rgba(255,255,255,.96); }
+.tab.active { color: #963e08; border-color: #e7975c; background: linear-gradient(180deg, #fff8f1 0%, #ffd9bf 100%); box-shadow: 0 4px 0 #d67d40, 0 9px 17px rgba(197,91,14,.22), inset 0 1px 0 rgba(255,255,255,.98); }
+.tab.active:hover { box-shadow: 0 6px 0 #c76b31, 0 12px 20px rgba(197,91,14,.25), inset 0 1px 0 rgba(255,255,255,.98); }
 .tab .num { color: #5f7893; margin-right: 5px; font-size: 11px; }
 
 .page-shell { width: min(1500px, calc(100% - 34px)); margin: 0 auto; }
@@ -151,6 +153,8 @@ td.row-num { color: #9aabc0; width: 42px; text-align: right; background: #f4f7fb
   .tabs { padding: 10px; }
   .overview-grid, .metric-grid, .gantt-summary, .steps { grid-template-columns: 1fr; }
   .brand-mark { width: 52px; height: 52px; }
+  .brand-mark small { font-size: 8px; }
+  .institution-logo { flex-basis: 150px; height: 54px; }
 }
 
 /* Segunda capa visual: módulos didácticos y controles de lectura. */
