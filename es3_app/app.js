@@ -219,7 +219,7 @@
     if (state.tab === '12') bindRiesgos();
     if (state.tab === '13') bindControl();
     if (state.tab === '02' || state.tab === '03') bindSearch();
-    if (window.APP_TECH_EDITION) document.dispatchEvent(new CustomEvent('es3:render', { detail: { tab: state.tab } }));
+    document.dispatchEvent(new CustomEvent('es3:render', { detail: { tab: state.tab } }));
   }
 
   function bindCommon() {
@@ -354,6 +354,21 @@
   function bindNetwork(kind) {
     const svg = document.querySelector(`.network-svg[data-kind="${kind}"]`);
     if (!svg) return;
+    const viewport = svg.closest('.network-wrap');
+    let pan = null;
+    svg.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('.node')) return;
+      pan = { id: event.pointerId, x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+      svg.setPointerCapture(event.pointerId);
+    });
+    svg.addEventListener('pointermove', (event) => {
+      if (!pan || pan.id !== event.pointerId) return;
+      viewport.scrollLeft = pan.left - (event.clientX - pan.x);
+      viewport.scrollTop = pan.top - (event.clientY - pan.y);
+    });
+    const stopPan = (event) => { if (pan?.id === event.pointerId) pan = null; };
+    svg.addEventListener('pointerup', stopPan);
+    svg.addEventListener('pointercancel', stopPan);
     const readPoint = (event) => { const matrix = svg.getScreenCTM(); if (!matrix) return null; const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()); return { x: point.x, y: point.y }; };
     const updateEdges = () => { const points = Object.fromEntries([...svg.querySelectorAll('.node')].map((node) => [node.dataset.node, { x: numberValue(node.dataset.x), y: numberValue(node.dataset.y) }])); svg.querySelectorAll('[data-edge-from]').forEach((edge) => { const from = points[edge.dataset.edgeFrom]; const to = points[edge.dataset.edgeTo]; if (from && to) edge.setAttribute('d', edgePath(from, to)); }); };
     const stopDrag = (node, event) => { node.classList.remove('dragging'); try { node.releasePointerCapture(event.pointerId); } catch (_) {} state.layouts[kind][node.dataset.node] = { x: numberValue(node.dataset.x), y: numberValue(node.dataset.y) }; };
