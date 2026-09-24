@@ -391,3 +391,17 @@ html[data-theme="light"] .insight-widget { background:radial-gradient(circle at 
 @media(max-width:1050px) { .digital-twin { grid-template-columns:1fr; }.twin-art { min-height:340px; }.twin-art svg { max-height:410px; }.dashboard-intro { align-items:flex-start; } }
 @media(max-width:650px) { .topbar { gap:12px; }.tabs { gap:8px; }.tab { padding:11px 12px; }.page-heading { margin:10px 0 15px; padding:19px; }.dashboard-stage { padding:16px; }.digital-twin { margin:17px 0; }.twin-copy { padding:24px 20px; }.twin-copy h4 { font-size:31px; }.twin-stats { gap:17px; }.twin-art { min-height:285px; }.twin-art svg { min-height:285px; }.twin-corner { font-size:8px; }.source-chip { max-width:100%; } }
 @media(prefers-reduced-motion:reduce) { .live-indicator i,.pulse-dot,.twin-art svg,.twin-scan,.insight-grid-home .insight-widget,.module-widgets .insight-widget { animation:none !important; }.twin-primary,.twin-secondary { transition:none; } }
+
+/* Retrato del equipo en la franja institucional, con transparencia real. */
+@media(min-width:1400px) {
+  .topbar { min-height:190px; }
+  .brand-mark { position:absolute; left:clamp(20px,5vw,70px); top:50%; z-index:2; transform:translateY(-50%); }
+  .brand-copy { position:absolute; left:calc(clamp(20px,5vw,70px) + 96px); top:50%; z-index:2; width:300px; max-width:300px; transform:translateY(-50%); }
+  .brand-copy h1 { max-width:300px; font-size:clamp(20px,1.8vw,26px); line-height:1.16; }
+  .brand-copy p { max-width:300px; font-size:12px; }
+  .team-portrait { position:absolute; right:calc(clamp(20px,5vw,70px) + 280px + 18px + 224px + 20px); bottom:0; z-index:1; width:min(23.4vw,320px); height:145px; overflow:hidden; pointer-events:none; }
+  .team-portrait img { display:block; width:100%; height:100%; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 5px 12px rgba(45,208,222,.17)); }
+  .institution-logo { position:absolute; top:18px; right:calc(clamp(20px,5vw,70px) + 280px + 18px); z-index:2; width:224px; height:78px; }
+  .top-actions { position:absolute; top:24px; right:clamp(20px,5vw,70px); z-index:3; width:280px; flex-wrap:nowrap; gap:10px; }
+}
+@media(max-width:1399px) { .team-portrait { display:none; } }
