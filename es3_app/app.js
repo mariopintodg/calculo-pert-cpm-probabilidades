@@ -137,7 +137,7 @@
     zoom: { cpm: 0.48, pert: 0.48 },
     budgetFactors: { gg: 0.15, utility: 0.10, iva: 0.19 },
     lookaheadRows: null,
-    theme: localStorage.getItem('es3-theme') || 'dark',
+    theme: window.APP_TECH_EDITION ? 'dark' : localStorage.getItem('es3-theme') || 'dark',
   };
 
   const widget = (label, value, hint, tone = 'cyan', icon = '◈') => `<article class="insight-widget tone-${tone}"><span class="widget-glint" aria-hidden="true"></span><div class="widget-top"><span>${esc(label)}</span><span class="widget-icon" aria-hidden="true">${icon}</span></div><strong>${value}</strong><small>${esc(hint)}</small></article>`;
@@ -219,6 +219,7 @@
     if (state.tab === '12') bindRiesgos();
     if (state.tab === '13') bindControl();
     if (state.tab === '02' || state.tab === '03') bindSearch();
+    if (window.APP_TECH_EDITION) document.dispatchEvent(new CustomEvent('es3:render', { detail: { tab: state.tab } }));
   }
 
   function bindCommon() {

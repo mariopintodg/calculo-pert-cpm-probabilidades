@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06111f">
+  <title>Suite ES3 · Edición tecnológica · Sede Social El Bosque</title>
+  <meta name="description" content="Edición tecnológica del tablero ES3 para la planificación y el control de la Sede Social El Bosque.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23051120'/%3E%3Cpath d='M15 45V19h8v18h26v8H15Z' fill='%234de4d4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css?v=20260924-group4-team-4">
+  <link rel="stylesheet" href="styles-tech.css?v=20260924-tech-1">
+</head>
+<body class="tech-edition">
+  <div class="tech-ambient" aria-hidden="true"></div>
+  <div class="tech-scroll-progress" id="techScrollProgress" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand-mark"><strong>G4</strong><small>Grupo 4</small></div>
+    <div class="brand-copy">
+      <div class="eyebrow">PLANIFICACIÓN Y CONTROL DE OBRAS</div>
+      <h1>Suite ES3 · Sede Social<br>El Bosque</h1>
+      <p>CPM, PERT, Gantt, costos y control del proyecto en una sola vista.</p>
+    </div>
+    <div class="team-portrait"><img src="grupo4_retrato.png?v=20260924-g4-2" alt="Ilustración de los cuatro integrantes del Grupo 4 con los brazos cruzados y cascos de seguridad"></div>
+    <div class="institution-logo"><img src="aiep_logo.png?v=20260922-6" alt="AIEP de la Universidad Andrés Bello"></div>
+    <div class="top-actions">
+      <button class="button button-soft" id="exportView">↓ Exportar vista</button>
+      <span class="badge">150 días corridos</span>
+    </div>
+  </header>
+  <nav class="tabs" id="tabs" aria-label="Hojas del proyecto"></nav>
+  <div class="tech-status-band">
+    <span class="tech-edition-pill"><i aria-hidden="true"></i> EDICIÓN TECNOLÓGICA</span>
+    <span class="tech-status-copy">GRUPO 4 <b>◆</b> 13 MÓDULOS <b>◆</b> UN MISMO PROYECTO</span>
+    <a href="suite.html" class="tech-classic-link">Ver versión anterior ↗</a>
+  </div>
+  <main class="page-shell">
+    <section class="page-heading">
+      <div>
+        <div class="eyebrow" id="sectionEyebrow">PROYECTO CONSTRUCCIÓN</div>
+        <h2 id="sectionTitle">Resumen del proyecto</h2>
+        <p id="sectionSubtitle">Seleccione una hoja para revisar datos, cálculos y notas explicativas.</p>
+      </div>
+      <div class="source-chip">Fuente: <span id="sourceName"></span></div>
+    </section>
+    <section id="app"></section>
+  </main>
+  <footer class="footer">
+    <span>Modelo didáctico basado en el avance Excel del proyecto.</span>
+    <span>Los precios, avances simulados y supuestos están identificados dentro de sus módulos.</span>
+  </footer>
+  <script>window.APP_TECH_EDITION = true;</script>
+  <script src="data.js?v=20260924-suite-2"></script>
+  <script src="app.js?v=20260924-tech-1"></script>
+  <script src="tech-effects.js?v=20260924-tech-1"></script>
+</body>
+</html>
