@@ -137,7 +137,34 @@
     zoom: { cpm: 0.48, pert: 0.48 },
     budgetFactors: { gg: 0.15, utility: 0.10, iva: 0.19 },
     lookaheadRows: null,
+    theme: localStorage.getItem('es3-theme') || 'dark',
   };
+
+  const widget = (label, value, hint, tone = 'cyan', icon = '◈') => `<article class="insight-widget tone-${tone}"><span class="widget-glint" aria-hidden="true"></span><div class="widget-top"><span>${esc(label)}</span><span class="widget-icon" aria-hidden="true">${icon}</span></div><strong>${value}</strong><small>${esc(hint)}</small></article>`;
+  function dashboardWidgets(tab) {
+    const m = D.metadata;
+    const cpm = calculateCPM(state.activities);
+    const critical = cpm.critical.length;
+    const riskRows = rowsByHeader('12_Riesgos', 'ID').filter((row) => /^R\d+/.test(String(row[0])));
+    const riskHigh = riskRows.filter((row) => numberValue(row[6]) >= 10).length;
+    const roleRows = rowsByHeader('02_Matriz Roles', 'Cargo').filter((row) => String(row[1] || '').trim() && !String(row[1]).startsWith('Base documental:'));
+    const cards = {
+      '01': [['Cargos definidos', String(roleRows.length), 'Organigrama y matriz de roles', 'cyan', '♧'], ['Módulos del proyecto', String(TABS.length), 'Indicadores ES3 conectados', 'blue', '▣'], ['Frentes de obra', '4', 'Faenas, gruesa, instalaciones y terminaciones', 'green', '▦']],
+      '02': [['Roles en la matriz', String(roleRows.length), 'Cargos con funciones y entregables', 'cyan', '♧'], ['Actividades', String(state.activities.length), 'Responsables vinculados al programa', 'blue', '▣'], ['Plazo del proyecto', `${m.days} d`, 'Base de coordinación', 'amber', '◷']],
+      '03': [['Partidas programadas', String(state.activities.length), 'Duración ligada al CPM', 'cyan', '▦'], ['Cuadrillas y frentes', '4 etapas', 'Producción en paralelo', 'blue', '♧'], ['Plazo objetivo', `${m.days} d`, 'Días corridos', 'amber', '◷']],
+      '04': [['Plazo CPM', `${num(cpm.projectFinish)} d`, 'Resultado con duraciones editables', 'cyan', '◷'], ['Actividades críticas', String(critical), 'Holgura total igual a cero', 'rose', '◆'], ['Nodos', String(state.activities.length), 'Precedencias y trabajo paralelo', 'blue', '⌘']],
+      '05': [['Plazo base', `${m.days} d`, `${date(state.startDate)} al ${date(addDays(state.startDate, m.days - 1))}`, 'cyan', '◷'], ['Partidas', String(state.activities.length), 'Barras según CPM o PERT', 'blue', '▦'], ['Ruta crítica', String(critical), 'Actividades que fijan el término', 'rose', '◆']],
+      '06': [['PERT esperado', `${num(m.pertExpected)} d`, 'Con incertidumbre de tres tiempos', 'cyan', 'σ'], ['Plazo CPM', `${num(cpm.projectFinish)} d`, 'Base determinística', 'blue', '◷'], ['Diferencia', `${num(m.pertExpected - cpm.projectFinish)} d`, 'PERT menos CPM', 'amber', '↗']],
+      '07': [['Oferta compensada', money(m.offer), 'Con IVA incluido', 'cyan', '$'], ['Techo municipal', money(m.municipalBudget), 'Base de comparación', 'blue', '▤'], ['Ahorro estimado', pct(m.savingsPct), money(m.savings), 'green', '↘']],
+      '08': [['Avance físico final', '100,00%', 'Curva programada al término', 'cyan', '◒'], ['Oferta valorizada', money(m.offer), 'Referencia económica del proyecto', 'blue', '$'], ['Horizonte', '22 semanas', '150 días corridos', 'green', '▦']],
+      '09': [['Capital de trabajo', money(m.workingCapital), 'Máximo déficit proyectado', 'rose', '$'], ['Oferta', money(m.offer), 'Base de cobros programados', 'blue', '▤'], ['Plazo', `${m.days} d`, 'Pagos y cobros mensuales', 'cyan', '◷']],
+      '10': [['Ventana inicial', '14 días', 'Primeros compromisos diarios', 'cyan', '▦'], ['Actividades CPM', String(state.activities.length), 'Fuente del plan', 'blue', '⌘'], ['Inicio', date(state.startDate), 'Fecha contractual editable', 'green', '◷']],
+      '11': [['Oferta total', money(m.offer), 'Base contractual de referencia', 'cyan', '$'], ['Plazo', `${m.days} d`, 'Cortes de avance y cobro', 'blue', '◷'], ['Obra gruesa', '8 partidas', 'Actividades D a K del programa', 'amber', '▦']],
+      '12': [['Riesgos externos', String(riskRows.length), 'Eventos del emplazamiento', 'cyan', '◇'], ['Prioridad alta', String(riskHigh), 'Nivel P × I de 10 o más', 'rose', '◆'], ['Escala', '1 a 25', 'Probabilidad × impacto', 'amber', '▤']],
+      '13': [['Oferta compensada', money(m.offer), 'Marco económico general', 'cyan', '$'], ['Terminaciones', '6 partidas', 'Actividades Q a V', 'blue', '▦'], ['Umbral crítico', '> 5%', 'Desviación de costo simulada', 'rose', '◆']],
+    };
+    return `<div class="module-widgets" aria-label="Indicadores de ${esc(TABS.find(t => t[0] === tab)?.[1] || 'módulo')}">${(cards[tab] || []).map((card) => widget(...card)).join('')}</div>`;
+  }
 
   function currentMeta() {
     if (state.tab === 'home') return ['INICIO', 'Panel general del proyecto', 'Una lectura visual del programa, los costos y el control de obra.'];
@@ -158,6 +185,7 @@
   }
 
   function render() {
+    document.documentElement.dataset.theme = state.theme;
     renderTabs();
     renderHeader();
     const target = $('#app');
@@ -176,6 +204,7 @@
     else if (state.tab === '12') target.innerHTML = riesgosView();
     else if (state.tab === '13') target.innerHTML = controlView();
     else target.innerHTML = genericSheetView(TABS.find((item) => item[0] === state.tab)?.[2]);
+    if (state.tab !== 'home') target.innerHTML = dashboardWidgets(state.tab) + target.innerHTML;
     target.innerHTML += methodologyBlock(state.tab);
     bindCommon();
     if (state.tab === '04') bindCPM();
@@ -195,16 +224,21 @@
     document.querySelectorAll('[data-tab]').forEach((element) => element.addEventListener('click', () => { state.tab = element.dataset.tab; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }));
     $('#exportView')?.addEventListener('click', exportCurrentView);
     $('#projectStart')?.addEventListener('change', (event) => { state.startDate = event.target.value || D.metadata.start; state.lookaheadRows = null; render(); });
+    $('#themeToggle')?.addEventListener('click', () => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('es3-theme', state.theme); render(); });
   }
 
   function overview() {
     const m = D.metadata;
-    return `<div class="metric-grid hero-metrics">
-      <div class="metric accent-blue"><div class="metric-icon">◷</div><div class="label">Plazo contractual</div><div class="value">${m.days} días</div><div class="hint">${date(state.startDate)} → ${date(addDays(state.startDate, m.days - 1))}</div></div>
-      <div class="metric accent-orange"><div class="metric-icon">$</div><div class="label">Oferta compensada</div><div class="value">${money(m.offer)}</div><div class="hint">IVA incluido · escenario competitivo</div></div>
-      <div class="metric accent-green"><div class="metric-icon">↓</div><div class="label">Ahorro al mandante</div><div class="value">${pct(m.savingsPct)}</div><div class="hint">${money(m.savings)} bajo presupuesto municipal</div></div>
-      <div class="metric accent-purple"><div class="metric-icon">σ</div><div class="label">PERT esperado</div><div class="value">${num(m.pertExpected)} d</div><div class="hint">Incertidumbre modelada</div></div>
-    </div>
+    const rows = rowsByHeader('08_Curvas_S', 'Semana').filter((row) => Number.isFinite(Number(row[0])) && Number(row[0]) >= 1 && Number(row[0]) <= 22);
+    const physical = rows.map((row) => numberValue(row[4]) * 100);
+    const financial = rows.map((row) => m.offer ? numberValue(row[8]) / (m.offer / 1.19) * 100 : 0);
+    const cpm = calculateCPM(state.activities);
+    const chart = rows.length ? lineChart([{ label: 'Físico', color: '#28dec3', values: physical }, { label: 'Venta neta', color: '#57a9ff', values: financial }], 100) : '<p>La serie semanal no está disponible.</p>';
+    const progress = Math.min(100, Math.max(0, 100 * m.offer / m.municipalBudget));
+    return `<div class="dashboard-stage"><div class="dashboard-intro"><div><span class="dashboard-kicker">TABLERO GENERAL · GRUPO 4</span><h3>Planificación de la Sede Social El Bosque</h3><p>Programa, oferta y control del mismo proyecto, con los datos de las hojas ES3.</p></div><button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">${state.theme === 'dark' ? '☀ Tema claro' : '☾ Tema oscuro'}</button></div>
+    <div class="insight-grid insight-grid-home">${widget('Plazo CPM', `${num(cpm.projectFinish)} días`, `${date(state.startDate)} a ${date(addDays(state.startDate, cpm.projectFinish - 1))}`, 'cyan', '◷')}${widget('Oferta compensada', money(m.offer), 'IVA incluido · presupuesto detallado', 'blue', '$')}${widget('Ahorro al mandante', pct(m.savingsPct), money(m.savings) + ' respecto del presupuesto municipal', 'green', '↘')}${widget('PERT esperado', `${num(m.pertExpected)} días`, 'Duraciones con incertidumbre', 'amber', 'σ')}</div>
+    <div class="dashboard-visuals"><article class="dashboard-panel dashboard-trend"><div class="dash-panel-heading"><div><span class="dashboard-kicker">PROGRAMACIÓN</span><h4>Curvas S acumuladas</h4><p>22 semanas · avance físico y venta neta en porcentaje del total.</p></div><span class="dash-pill">150 días</span></div>${chart}<div class="dash-legend"><span><i class="legend-line" style="background:#28dec3"></i>Físico</span><span><i class="legend-line" style="background:#57a9ff"></i>Venta neta</span></div></article><article class="dashboard-panel dashboard-budget"><div class="dash-panel-heading"><div><span class="dashboard-kicker">OFERTA</span><h4>Presupuesto y holgura</h4><p>Comparación con el techo municipal.</p></div></div><div class="budget-ring" style="--ring-value:${progress}%"><div><strong>${pct(m.offer / m.municipalBudget)}</strong><span>del presupuesto</span></div></div><div class="budget-comparison"><div><span>Oferta</span><strong>${money(m.offer)}</strong></div><div><span>Techo municipal</span><strong>${money(m.municipalBudget)}</strong></div><div class="savings"><span>Diferencia favorable</span><strong>${money(m.savings)}</strong></div></div></article></div>
+    <div class="dashboard-bottom"><article class="dashboard-panel"><div class="dash-panel-heading"><div><span class="dashboard-kicker">SECUENCIA</span><h4>Ruta crítica CPM</h4><p>${cpm.critical.length} actividades sin holgura determinan el plazo.</p></div></div><div class="critical-path-chips">${cpm.critical.map((id) => `<span>${esc(id)}</span>`).join('')}</div><button class="dash-link" data-tab="04">Ver red y holguras →</button></article><article class="dashboard-panel"><div class="dash-panel-heading"><div><span class="dashboard-kicker">CAJA</span><h4>Capital de trabajo</h4><p>Déficit máximo proyectado en el flujo mensual.</p></div></div><div class="dashboard-large-number">${money(m.workingCapital)}</div><button class="dash-link" data-tab="09">Abrir flujo de caja →</button></article></div></div>
     <div class="dashboard-grid">
       <div class="card dashboard-main"><div class="card-head"><div><span class="overline">Lectura rápida</span><h3>Controla el proyecto por capas</h3><p>Parte por la organización, revisa la red y termina en costos, riesgos y desempeño.</p></div><button class="button button-primary" data-tab="04">Abrir malla CPM</button></div><div class="card-body"><div class="journey-grid">${TABS.map(([number, label, , description]) => `<button class="journey" data-tab="${number}"><span class="journey-number">${number}</span><span><strong>${esc(label)}</strong><small>${esc(description)}</small></span><span class="journey-arrow">↗</span></button>`).join('')}</div></div></div>
       <div class="card"><div class="card-head"><div><span class="overline">Control editable</span><h3>Fecha de inicio del proyecto</h3><p>Modificarla actualiza las fechas de la Gantt.</p></div></div><div class="card-body"><label class="field-label" for="projectStart">Inicio contractual</label><input class="large-input" id="projectStart" type="date" value="${esc(state.startDate)}"><div class="formula-card"><strong>Ruta crítica inicial</strong><span>A → B → D → E → F → G → I → J → L → Q → R → T → V</span></div><div class="source-line">Los precios, avances simulados y supuestos están explicados dentro de sus módulos.</div></div></div>
