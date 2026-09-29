@@ -415,6 +415,89 @@ html[data-theme="light"] .insight-widget { background:radial-gradient(circle at 
   .team-credit-mobile { display:block; padding:5px 16px; color:#d9f4fb; background:#0d2d49; font-size:10px; font-weight:650; text-align:center; line-height:1.35; }
 }
 
+/* Cabecera compartida: la versión clásica conserva su contenido claro,
+   pero utiliza la misma franja institucional animada de la edición tecnológica. */
+body.tech-header .topbar {
+  background:radial-gradient(circle at 48% 50%,rgba(31,197,211,.13),transparent 42%),linear-gradient(115deg,#07182c,#0c3150 63%,#09243c);
+  border-bottom:1px solid rgba(110,230,232,.43);
+  box-shadow:0 18px 36px rgba(0,7,20,.35);
+}
+body.tech-header .topbar::before { opacity:.34; animation:classic-tech-grid-drift 28s linear infinite; }
+body.tech-header .topbar::after { border-color:rgba(92,235,224,.19); animation:classic-tech-orbit 9s ease-in-out infinite; }
+body.tech-header .brand-mark {
+  border-color:#77f3e4;
+  background:linear-gradient(145deg,rgba(38,224,212,.23),rgba(32,97,187,.19));
+  box-shadow:0 0 0 5px rgba(67,241,224,.08),inset 0 0 20px rgba(80,235,222,.18),0 0 26px rgba(75,241,220,.20);
+  color:#e4ffff;
+  animation:classic-tech-logo-glow 5s ease-in-out infinite;
+}
+body.tech-header .brand-mark small { color:#97eaf1; }
+body.tech-header .brand-copy h1 {
+  color:#f4fdff;
+  background:linear-gradient(90deg,#f4fdff 10%,#b5fbf5 53%,#f4fdff 87%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:classic-tech-text-sheen 10s ease-in-out infinite;
+}
+body.tech-header .brand-copy p { color:#b7d9e9; }
+body.tech-header .team-portrait img { filter:drop-shadow(0 6px 14px rgba(76,234,229,.26)); animation:classic-tech-portrait-float 6.5s ease-in-out infinite; }
+body.tech-header .institution-logo img { filter:drop-shadow(1px 0 0 rgba(230,249,255,.65)) drop-shadow(-1px 0 0 rgba(230,249,255,.65)) drop-shadow(0 1px 0 rgba(230,249,255,.65)) drop-shadow(0 -1px 0 rgba(230,249,255,.65)) drop-shadow(0 0 12px rgba(143,228,255,.25)); }
+body.tech-header .badge { color:#8af6e8; border-color:rgba(100,240,218,.4); background:rgba(25,135,145,.18); box-shadow:inset 0 0 14px rgba(59,237,220,.07); animation:classic-tech-badge-pulse 4.5s ease-in-out infinite; }
+body.tech-header .top-actions .button-soft { color:#d4f4ff; border:1px solid rgba(112,202,226,.39); background:linear-gradient(145deg,#164469,#0e3053); box-shadow:inset 0 1px 0 rgba(231,255,255,.11),0 7px 18px rgba(0,8,24,.20); }
+body.tech-header .top-actions .button-soft:hover { color:#f3ffff; border-color:#7eece9; background:linear-gradient(145deg,#185b85,#0d345d); box-shadow:0 11px 25px rgba(27,191,211,.22),0 0 16px rgba(78,238,232,.16); }
+body.tech-header .team-credit-mobile { color:#d9f4fb; background:#0d2d49; }
+
+/* Más vida en la vista clásica, manteniendo su lectura clara y académica. */
+body.classic-edition #app > * { animation:classic-content-in .58s cubic-bezier(.18,.8,.25,1) both; }
+body.classic-edition .page-heading { overflow:hidden; }
+body.classic-edition .page-heading::after {
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  right:-35%;
+  width:32%;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(47,198,211,.12),transparent);
+  transform:skewX(-20deg);
+  animation:classic-heading-scan 13s ease-in-out infinite;
+}
+body.classic-edition :is(.card,.section-summary,.dashboard-panel,.insight-widget,.role-card,.performance-group,.risk-card,.commitment-card,.commitment-window,.eepp-period,.gantt-detail-card,.methodology-card,.mini-stat) {
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease,border-color .28s ease;
+}
+body.classic-edition :is(.card,.section-summary,.dashboard-panel,.insight-widget,.role-card,.performance-group,.risk-card,.commitment-card,.commitment-window,.eepp-period,.gantt-detail-card,.methodology-card,.mini-stat):hover {
+  transform:translateY(-3px);
+  box-shadow:0 18px 34px rgba(18,74,118,.15),0 0 18px rgba(45,183,205,.08);
+}
+body.classic-edition .tab.active { animation:classic-tab-breathe 3.8s ease-in-out infinite; }
+body.classic-edition .insight-widget { animation:classic-widget-in .7s cubic-bezier(.18,.8,.25,1) both; }
+body.classic-edition .insight-widget:nth-child(2) { animation-delay:.08s; }
+body.classic-edition .insight-widget:nth-child(3) { animation-delay:.16s; }
+body.classic-edition .insight-widget:nth-child(4) { animation-delay:.24s; }
+
+@keyframes classic-tech-grid-drift { to { transform:translate(44px,44px); } }
+@keyframes classic-tech-orbit { 50% { transform:scale(1.06) rotate(8deg); opacity:.67; } }
+@keyframes classic-tech-logo-glow { 50% { box-shadow:0 0 0 5px rgba(67,241,224,.12),inset 0 0 27px rgba(80,235,222,.26),0 0 33px rgba(75,241,220,.35); } }
+@keyframes classic-tech-text-sheen { 50% { background-position:100% center; } }
+@keyframes classic-tech-portrait-float { 50% { transform:translateY(-4px); filter:drop-shadow(0 10px 20px rgba(76,234,229,.31)); } }
+@keyframes classic-tech-badge-pulse { 50% { box-shadow:inset 0 0 18px rgba(59,237,220,.12),0 0 18px rgba(65,226,218,.15); } }
+@keyframes classic-content-in { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+@keyframes classic-heading-scan { 0%,22% { right:-35%; } 60%,100% { right:115%; } }
+@keyframes classic-tab-breathe { 50% { box-shadow:0 4px 0 #178891,0 10px 28px rgba(29,186,193,.34),0 0 22px rgba(71,247,227,.18),inset 0 1px 0 white; } }
+@keyframes classic-widget-in { from { opacity:0; transform:translateY(14px) scale(.985); } to { opacity:1; transform:none; } }
+
+@media(prefers-reduced-motion:reduce) {
+  body.tech-header *,body.tech-header *::before,body.tech-header *::after,
+  body.classic-edition *,body.classic-edition *::before,body.classic-edition *::after {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+    transition-duration:.01ms !important;
+  }
+}
+
 /* Selector interactivo del alcance CPM/PERT. */
 .rubric-networks .scope-picker { align-items:stretch; }
 .rubric-networks .scope-nudge { grid-column:1 / -1; display:flex; align-items:center; gap:11px; min-height:46px; padding:2px 3px 5px; }
