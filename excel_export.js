@@ -186,10 +186,10 @@ const ExcelExporter = {
         "PARTIDA",
         "PREDECESORAS",
         "DURACIÓN (d)",
-        "IT (ES - Inicio Temprano)",
-        "FT (EF - Fin Temprano)",
-        "ITa (LS - Inicio Tardío)",
-        "FTa (LF - Fin Tardío)",
+        "IT (Inicio temprano)",
+        "FT (Término temprano)",
+        "ITa (Inicio tardío)",
+        "FTa (Término tardío)",
         "HOLGURA TOTAL (HT)",
         "HOLGURA LIBRE (HL)",
         "¿ES CRÍTICA?"
@@ -309,7 +309,7 @@ const ExcelExporter = {
         ["MÉTODO DE LA RUTA CRÍTICA (CPM) - MATRIZ DE HOLGURAS", "", "", "", "", "", "", "", "", ""],
         ["Ruta Crítica:", cpmResult.criticalPaths[0] ? cpmResult.criticalPaths[0].join(" → ") : "--", "", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", "", "", ""],
-        ["PARTIDA", "PREDECESORAS", "DURACIÓN", "IT (ES)", "FT (EF)", "ITa (LS)", "FTa (LF)", "HOLGURA TOTAL (HT)", "HOLGURA LIBRE (HL)", "¿ES CRÍTICA?"]
+        ["PARTIDA", "PREDECESORAS", "DURACIÓN", "IT", "FT", "ITa", "FTa", "HOLGURA TOTAL (HT)", "HOLGURA LIBRE (HL)", "¿ES CRÍTICA?"]
       ];
       cpmResult.sortedIds.forEach(id => {
         const act = cpmResult.activities[id];

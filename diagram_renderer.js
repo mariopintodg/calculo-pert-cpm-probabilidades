@@ -232,7 +232,7 @@ class DiagramRenderer {
     textDur.setAttribute("font-weight", "600");
     textDur.setAttribute("fill", textColor);
     const isPertDiagram = this.data && this.data.diagramType === 'pert';
-    const formatPertTime = value => Number(value).toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const formatPertTime = value => (Math.abs(Number(value)) < 0.0000001 ? 0 : Number(value)).toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const durationText = isPertDiagram ? formatPertTime(act.duration) : Math.round(act.duration);
     textDur.textContent = `${isPertDiagram ? 'Te=' : 'd='}${durationText}`;
     g.appendChild(textDur);
@@ -389,7 +389,7 @@ class DiagramRenderer {
     const padding = 30;
     const scaleX = (svgRect.width - padding * 2) / this.contentWidth;
     const scaleY = (svgRect.height - padding * 2) / this.contentHeight;
-    this.zoom = Math.min(Math.max(0.4, Math.min(scaleX, scaleY)), 1.15);
+    this.zoom = Math.min(Math.max(0.05, Math.min(scaleX, scaleY)), 1.15);
     this.panX = (svgRect.width - this.contentWidth * this.zoom) / 2;
     this.panY = (svgRect.height - this.contentHeight * this.zoom) / 2;
     this.draw();
