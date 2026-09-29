@@ -9,10 +9,10 @@
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-label', 'Presentación del proyecto Grupo 4');
   overlay.innerHTML = `<div class="intro-shell">
-    <div class="intro-topline"><span class="intro-live"><i aria-hidden="true"></i> PRESENTACIÓN DEL PROYECTO</span><span>00 / 13 · GRUPO 4</span></div>
+    <div class="intro-topline"><span class="intro-live"><i aria-hidden="true"></i> PRESENTACIÓN DEL PROYECTO</span><span>00 / 08 · GRUPO 4</span></div>
     <div class="intro-media">
       <video class="intro-video" autoplay muted playsinline preload="auto" aria-label="Video de presentación del proyecto Sede Social El Bosque">
-        <source src="intro-grupo4-sede-social-el-bosque.webm?v=20260929-intro-1" type="video/webm">
+        <source src="intro-grupo4-sede-social-el-bosque.mp4?v=20260929-intro-mp4-1" type="video/mp4">
       </video>
       <div class="intro-fallback-art"><img src="grupo4_retrato.png?v=20260924-g4-2" alt="Integrantes del Grupo 4"></div>
       <div class="intro-vignette"></div>
@@ -44,6 +44,6 @@
     overlay.classList.add('video-fallback');
     window.setTimeout(close, 2200);
   } else {
-    window.setTimeout(close, 7600);
+    window.setTimeout(close, 8200);
   }
 })();
