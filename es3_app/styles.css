@@ -543,11 +543,20 @@ body.intro-open { overflow:hidden; }
 .video-fallback .intro-fallback-art { display:block; }
 .video-fallback .intro-overlay-copy { opacity:1; }
 .intro-bottom { padding:12px 4px 2px; }
+.intro-actions { display:flex; align-items:center; gap:8px; }
+.intro-sound { border:1px solid rgba(115,222,226,.45); border-radius:999px; padding:8px 12px; color:#aaf7eb; background:rgba(31,150,156,.2); font:800 10px/1 ui-monospace,monospace; cursor:pointer; transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease; }
+.intro-sound:hover { transform:translateY(-2px); border-color:#78f1e6; background:rgba(31,180,172,.3); box-shadow:0 8px 20px rgba(37,207,215,.2); }
+.intro-sound[aria-pressed="true"] { color:#071a28; background:#78f1e6; box-shadow:0 0 18px rgba(120,241,230,.3); }
+.intro-enter { display:none; border:1px solid rgba(117,245,221,.8); border-radius:999px; padding:9px 16px; color:#061b25; background:linear-gradient(110deg,#8bffe4,#70cfff); box-shadow:0 0 22px rgba(94,236,220,.28),inset 0 1px 0 rgba(255,255,255,.55); font:900 11px/1 ui-monospace,monospace; cursor:pointer; transition:transform .22s ease,box-shadow .22s ease,filter .22s ease; }
+.intro-enter:hover { transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 10px 28px rgba(67,231,215,.36),inset 0 1px 0 rgba(255,255,255,.7); }
+.intro-enter b { margin-left:8px; font-size:15px; }
+.is-finished .intro-enter { display:inline-flex; align-items:center; }
+.is-finished .intro-skip { display:none; }
 .intro-skip { border:1px solid rgba(115,222,226,.36); border-radius:999px; padding:8px 12px; color:#d6f7fa; background:rgba(57,151,174,.16); font:800 10px/1 ui-monospace,monospace; cursor:pointer; transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease; }
 .intro-skip:hover { transform:translateY(-2px); border-color:#78f1e6; box-shadow:0 8px 20px rgba(37,207,215,.18); }
 .intro-skip b { color:#7af4df; margin-left:6px; }
 .intro-progress { height:3px; margin-top:12px; overflow:hidden; border-radius:999px; background:rgba(97,180,200,.18); }
-.intro-progress i { display:block; width:100%; height:100%; transform-origin:left center; background:linear-gradient(90deg,#70f2d9,#62c5ff,#b98cff); box-shadow:0 0 12px #6bf0db; animation:intro-progress 7.6s linear both; }
+.intro-progress i { display:block; width:100%; height:100%; transform-origin:left center; background:linear-gradient(90deg,#70f2d9,#62c5ff,#b98cff); box-shadow:0 0 12px #6bf0db; animation:intro-progress 8s linear both; }
 .is-closing { animation:intro-fade-out .45s ease both; pointer-events:none; }
 @keyframes intro-fade-in { from { opacity:0; } to { opacity:1; } }
 @keyframes intro-fade-out { to { opacity:0; } }
@@ -556,7 +565,7 @@ body.intro-open { overflow:hidden; }
 @keyframes intro-live-pulse { 50% { opacity:.42; box-shadow:0 0 0 7px rgba(92,245,218,.06),0 0 20px #5cf5da; } }
 @keyframes intro-fallback-float { 50% { transform:translateY(-7px) scale(1.015); } }
 @keyframes intro-progress { from { transform:scaleX(0); } to { transform:scaleX(1); } }
-@media(max-width:650px) { .project-intro { padding:10px; }.intro-shell { border-radius:18px; padding:10px; }.intro-topline,.intro-bottom { font-size:8px; }.intro-topline { padding-bottom:8px; }.intro-bottom { align-items:flex-start; flex-direction:column; }.intro-skip { align-self:flex-end; }.intro-overlay-copy { padding:9%; }.intro-overlay-copy h1 { margin:12px 0 7px; }.intro-overlay-copy small { margin-top:16px; font-size:9px; } }
+@media(max-width:650px) { .project-intro { padding:10px; }.intro-shell { border-radius:18px; padding:10px; }.intro-topline,.intro-bottom { font-size:8px; }.intro-topline { padding-bottom:8px; }.intro-bottom { align-items:flex-start; flex-direction:column; }.intro-actions { width:100%; justify-content:flex-end; }.intro-sound,.intro-skip { padding:8px 10px; font-size:9px; }.intro-overlay-copy { padding:9%; }.intro-overlay-copy h1 { margin:12px 0 7px; }.intro-overlay-copy small { margin-top:16px; font-size:9px; } }
 @media(prefers-reduced-motion:reduce) { .project-intro::before,.intro-live i,.intro-fallback-art img,.intro-progress i { animation:none; }.intro-progress i { transform:none; }.intro-shell { animation:none; } }
 
 @keyframes classic-tech-grid-drift { to { transform:translate(44px,44px); } }
