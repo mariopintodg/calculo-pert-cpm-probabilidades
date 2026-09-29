@@ -25,6 +25,9 @@
   body.classList.add('intro-open');
 
   const video = overlay.querySelector('.intro-video');
+  let audioContext = null;
+  let audioGain = null;
+  let fadeLoopStarted = false;
   let closed = false;
   const close = () => {
     if (closed) return;
@@ -40,6 +43,41 @@
     soundButton.setAttribute('aria-label', enabled ? 'Silenciar sonido' : 'Activar sonido');
     soundButton.textContent = enabled ? '🔊 Sonido activado' : '🔊 Activar sonido';
   };
+  const prepareAudioGraph = () => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass && !audioGain) {
+      audioContext = new AudioContextClass();
+      const source = audioContext.createMediaElementSource(video);
+      audioGain = audioContext.createGain();
+      source.connect(audioGain);
+      audioGain.connect(audioContext.destination);
+    }
+    return audioContext?.resume() || Promise.resolve();
+  };
+  const followOutroFade = () => {
+    if (fadeLoopStarted) return;
+    fadeLoopStarted = true;
+    const fadeSeconds = 1.6;
+    const update = () => {
+      if (closed) {
+        fadeLoopStarted = false;
+        return;
+      }
+      if (Number.isFinite(video.duration) && video.duration > 0) {
+        const remaining = video.duration - video.currentTime;
+        const level = Math.min(1, Math.max(0, remaining / fadeSeconds));
+        if (audioGain && audioContext?.state === 'running') {
+          audioGain.gain.setTargetAtTime(level, audioContext.currentTime, 0.035);
+        } else {
+          video.volume = level;
+        }
+      }
+      if (!video.ended) window.requestAnimationFrame(update);
+      else fadeLoopStarted = false;
+    };
+    window.requestAnimationFrame(update);
+  };
+  video.addEventListener('playing', followOutroFade);
   overlay.querySelector('.intro-enter').addEventListener('click', close);
   overlay.querySelector('.intro-skip').addEventListener('click', close);
   soundButton.addEventListener('click', async () => {
@@ -48,8 +86,10 @@
       setSoundState(false);
       return;
     }
-    video.muted = false;
     try {
+      await prepareAudioGraph();
+      video.volume = 1;
+      video.muted = false;
       await video.play();
       setSoundState(true);
     } catch {
@@ -64,10 +104,14 @@
     finish();
   }, { once: true });
   video.muted = false;
-  video.play().then(() => setSoundState(true)).catch(() => {
+  video.volume = 1;
+  video.play().then(() => {
+    setSoundState(true);
+    followOutroFade();
+  }).catch(() => {
     video.muted = true;
     setSoundState(false);
-    video.play().catch(() => overlay.classList.add('video-fallback'));
+    video.play().then(followOutroFade).catch(() => overlay.classList.add('video-fallback'));
   });
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
