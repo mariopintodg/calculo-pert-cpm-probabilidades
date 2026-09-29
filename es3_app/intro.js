@@ -11,7 +11,7 @@
   overlay.innerHTML = `<div class="intro-shell">
     <div class="intro-topline"><span class="intro-live"><i aria-hidden="true"></i> PRESENTACIÓN DEL PROYECTO</span><span>00 / 08 · GRUPO 4</span></div>
     <div class="intro-media">
-      <video class="intro-video" autoplay playsinline preload="auto" aria-label="Video de presentación del proyecto Sede Social El Bosque">
+      <video class="intro-video" muted playsinline preload="auto" aria-label="Video de presentación del proyecto Sede Social El Bosque">
         <source src="intro-grupo4-sede-social-el-bosque.mp4?v=20260929-intro-mp4-1" type="video/mp4">
       </video>
       <div class="intro-fallback-art"><img src="grupo4_retrato.png?v=20260924-g4-2" alt="Integrantes del Grupo 4"></div>
@@ -103,21 +103,27 @@
     overlay.classList.add('video-fallback');
     finish();
   }, { once: true });
-  video.muted = false;
-  video.volume = 1;
-  video.play().then(() => {
-    setSoundState(true);
-    followOutroFade();
-  }).catch(() => {
-    video.muted = true;
-    setSoundState(false);
-    video.play().then(followOutroFade).catch(() => overlay.classList.add('video-fallback'));
-  });
-
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduced) {
     video.pause();
     overlay.classList.add('video-fallback');
     finish();
+  } else {
+    video.muted = true;
+    video.volume = 1;
+    setSoundState(false);
+    const startAfterPagePaint = () => {
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+        video.play().then(followOutroFade).catch(() => {
+          overlay.classList.add('video-fallback');
+          finish();
+        });
+      }));
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startAfterPagePaint, { once: true });
+    } else {
+      startAfterPagePaint();
+    }
   }
 })();
