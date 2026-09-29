@@ -518,6 +518,47 @@ body.classic-edition .twin-art::after { animation-duration:6.8s; }
 body.classic-edition .twin-orbit { animation-duration:14s; }
 body.classic-edition .orbit-two { animation-duration:21s; }
 
+/* Intro audiovisual de bienvenida, visible en cada entrada a la aplicación. */
+body.intro-open { overflow:hidden; }
+.project-intro { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:clamp(12px,3vw,42px); color:#e9fbff; background:radial-gradient(circle at 50% 36%,rgba(31,164,190,.21),transparent 37%),linear-gradient(145deg,#04101d,#071b31 58%,#050d19); animation:intro-fade-in .55s ease both; }
+.project-intro::before { content:""; position:absolute; inset:0; opacity:.23; background-image:linear-gradient(rgba(89,202,224,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(89,202,224,.13) 1px,transparent 1px); background-size:44px 44px; mask-image:radial-gradient(ellipse at center,black 20%,transparent 87%); animation:intro-grid-drift 24s linear infinite; }
+.intro-shell { position:relative; width:min(1160px,100%); padding:clamp(12px,1.8vw,23px); border:1px solid rgba(104,234,229,.35); border-radius:24px; background:linear-gradient(145deg,rgba(8,39,63,.94),rgba(5,22,40,.95)); box-shadow:0 30px 85px rgba(0,5,18,.58),0 0 36px rgba(34,204,210,.12),inset 0 1px 0 rgba(220,255,255,.12); animation:intro-shell-in .72s cubic-bezier(.18,.8,.25,1) both; }
+.intro-topline,.intro-bottom { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#87b6c9; font:800 10px/1.2 ui-monospace,Consolas,monospace; letter-spacing:.08em; }
+.intro-topline { padding:0 4px 12px; }
+.intro-live { display:inline-flex; align-items:center; gap:8px; color:#7af4df; }
+.intro-live i { width:7px; height:7px; border-radius:50%; background:#5cf5da; box-shadow:0 0 0 4px rgba(92,245,218,.12),0 0 15px #5cf5da; animation:intro-live-pulse 2s ease-in-out infinite; }
+.intro-media { position:relative; overflow:hidden; aspect-ratio:16/9; border:1px solid rgba(95,203,223,.25); border-radius:17px; background:#061a2d; box-shadow:inset 0 1px 0 rgba(255,255,255,.09); }
+.intro-video,.intro-fallback-art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.intro-video { display:block; background:#061a2d; }
+.intro-fallback-art { display:none; background:radial-gradient(circle at 50% 45%,rgba(37,156,180,.22),transparent 52%),linear-gradient(145deg,#062037,#071524); }
+.intro-fallback-art img { display:block; width:75%; height:92%; margin:2% auto 0; object-fit:contain; filter:drop-shadow(0 0 20px rgba(80,238,224,.31)); animation:intro-fallback-float 4s ease-in-out infinite; }
+.intro-vignette { position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg,rgba(3,13,24,.16),transparent 35%,transparent 70%,rgba(3,13,24,.2)),linear-gradient(0deg,rgba(3,12,22,.28),transparent 24%,transparent 76%,rgba(3,12,22,.18)); }
+.intro-overlay-copy { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:8%; opacity:0; pointer-events:none; }
+.intro-overlay-copy span { color:#7af4df; font:800 11px/1.2 ui-monospace,monospace; letter-spacing:.12em; }
+.intro-overlay-copy h1 { margin:18px 0 10px; color:#f5feff; font-size:clamp(28px,5vw,68px); line-height:1.03; letter-spacing:-.05em; }
+.intro-overlay-copy h1 em { color:#73e8dc; font-style:normal; }
+.intro-overlay-copy p { margin:0; color:#b9d5e4; font-size:clamp(14px,2vw,22px); }
+.intro-overlay-copy small { margin-top:28px; color:#8ab6c8; font-size:12px; }
+.video-fallback .intro-video { display:none; }
+.video-fallback .intro-fallback-art { display:block; }
+.video-fallback .intro-overlay-copy { opacity:1; }
+.intro-bottom { padding:12px 4px 2px; }
+.intro-skip { border:1px solid rgba(115,222,226,.36); border-radius:999px; padding:8px 12px; color:#d6f7fa; background:rgba(57,151,174,.16); font:800 10px/1 ui-monospace,monospace; cursor:pointer; transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease; }
+.intro-skip:hover { transform:translateY(-2px); border-color:#78f1e6; box-shadow:0 8px 20px rgba(37,207,215,.18); }
+.intro-skip b { color:#7af4df; margin-left:6px; }
+.intro-progress { height:3px; margin-top:12px; overflow:hidden; border-radius:999px; background:rgba(97,180,200,.18); }
+.intro-progress i { display:block; width:100%; height:100%; transform-origin:left center; background:linear-gradient(90deg,#70f2d9,#62c5ff,#b98cff); box-shadow:0 0 12px #6bf0db; animation:intro-progress 7.6s linear both; }
+.is-closing { animation:intro-fade-out .45s ease both; pointer-events:none; }
+@keyframes intro-fade-in { from { opacity:0; } to { opacity:1; } }
+@keyframes intro-fade-out { to { opacity:0; } }
+@keyframes intro-shell-in { from { opacity:0; transform:translateY(18px) scale(.97); filter:blur(5px); } to { opacity:1; transform:none; filter:none; } }
+@keyframes intro-grid-drift { to { transform:translate(44px,44px); } }
+@keyframes intro-live-pulse { 50% { opacity:.42; box-shadow:0 0 0 7px rgba(92,245,218,.06),0 0 20px #5cf5da; } }
+@keyframes intro-fallback-float { 50% { transform:translateY(-7px) scale(1.015); } }
+@keyframes intro-progress { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+@media(max-width:650px) { .project-intro { padding:10px; }.intro-shell { border-radius:18px; padding:10px; }.intro-topline,.intro-bottom { font-size:8px; }.intro-topline { padding-bottom:8px; }.intro-bottom { align-items:flex-start; flex-direction:column; }.intro-skip { align-self:flex-end; }.intro-overlay-copy { padding:9%; }.intro-overlay-copy h1 { margin:12px 0 7px; }.intro-overlay-copy small { margin-top:16px; font-size:9px; } }
+@media(prefers-reduced-motion:reduce) { .project-intro::before,.intro-live i,.intro-fallback-art img,.intro-progress i { animation:none; }.intro-progress i { transform:none; }.intro-shell { animation:none; } }
+
 @keyframes classic-tech-grid-drift { to { transform:translate(44px,44px); } }
 @keyframes classic-tech-orbit { 50% { transform:scale(1.06) rotate(8deg); opacity:.67; } }
 @keyframes classic-tech-logo-glow { 50% { box-shadow:0 0 0 5px rgba(67,241,224,.12),inset 0 0 27px rgba(80,235,222,.26),0 0 33px rgba(75,241,220,.35); } }
