@@ -477,6 +477,47 @@ body.classic-edition .insight-widget:nth-child(2) { animation-delay:.08s; }
 body.classic-edition .insight-widget:nth-child(3) { animation-delay:.16s; }
 body.classic-edition .insight-widget:nth-child(4) { animation-delay:.24s; }
 
+/* Visual principal del modelo digital: una pieza BIM más expresiva y tecnológica. */
+.twin-art::after {
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:0;
+  pointer-events:none;
+  background:url("digital-twin-construction-2.png?v=20260929-construction-2") center / contain no-repeat;
+  filter:drop-shadow(0 13px 21px rgba(21,207,225,.22));
+  animation:twin-image-float 8s ease-in-out infinite;
+}
+.twin-art svg { opacity:0; }
+.twin-orbit { animation:twin-orbit-spin 18s linear infinite; }
+.orbit-two { animation-direction:reverse; animation-duration:27s; }
+.twin-primary { position:relative; overflow:hidden; }
+.twin-primary::after {
+  content:"";
+  position:absolute;
+  inset:-20% auto -20% -55%;
+  width:34%;
+  transform:skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);
+  animation:twin-button-sweep 4.8s ease-in-out infinite;
+  pointer-events:none;
+}
+body.classic-edition .dashboard-stage::before { animation:classic-dashboard-grid 28s linear infinite; }
+body.classic-edition .dashboard-stage::after {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-15% 20% auto -15%;
+  height:55%;
+  transform:rotate(-8deg) translateX(-120%);
+  background:linear-gradient(90deg,transparent,rgba(98,245,227,.08),transparent);
+  animation:classic-dashboard-scan 14s ease-in-out infinite;
+  pointer-events:none;
+}
+body.classic-edition .twin-art::after { animation-duration:6.8s; }
+body.classic-edition .twin-orbit { animation-duration:14s; }
+body.classic-edition .orbit-two { animation-duration:21s; }
+
 @keyframes classic-tech-grid-drift { to { transform:translate(44px,44px); } }
 @keyframes classic-tech-orbit { 50% { transform:scale(1.06) rotate(8deg); opacity:.67; } }
 @keyframes classic-tech-logo-glow { 50% { box-shadow:0 0 0 5px rgba(67,241,224,.12),inset 0 0 27px rgba(80,235,222,.26),0 0 33px rgba(75,241,220,.35); } }
@@ -487,6 +528,11 @@ body.classic-edition .insight-widget:nth-child(4) { animation-delay:.24s; }
 @keyframes classic-heading-scan { 0%,22% { right:-35%; } 60%,100% { right:115%; } }
 @keyframes classic-tab-breathe { 50% { box-shadow:0 4px 0 #178891,0 10px 28px rgba(29,186,193,.34),0 0 22px rgba(71,247,227,.18),inset 0 1px 0 white; } }
 @keyframes classic-widget-in { from { opacity:0; transform:translateY(14px) scale(.985); } to { opacity:1; transform:none; } }
+@keyframes twin-image-float { 0%,100% { transform:translateY(0) scale(1); } 50% { transform:translateY(-7px) scale(1.012); } }
+@keyframes twin-orbit-spin { 0% { transform:translate(-50%,-50%) rotateX(67deg) rotateZ(0deg); } 100% { transform:translate(-50%,-50%) rotateX(67deg) rotateZ(360deg); } }
+@keyframes twin-button-sweep { 0%,20% { left:-55%; } 62%,100% { left:145%; } }
+@keyframes classic-dashboard-grid { to { background-position:28px 28px; } }
+@keyframes classic-dashboard-scan { 0%,23% { transform:rotate(-8deg) translateX(-120%); opacity:0; } 40% { opacity:1; } 68%,100% { transform:rotate(-8deg) translateX(250%); opacity:0; } }
 
 @media(prefers-reduced-motion:reduce) {
   body.tech-header *,body.tech-header *::before,body.tech-header *::after,
